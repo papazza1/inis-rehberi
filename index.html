@@ -339,18 +339,18 @@ function render(){
     <div><label for="late">İniş saati</label><select id="late"><option value="0">Gündüz ya da akşam</option><option value="1">Gece 23:00'ten sonra</option></select></div>
   </form></div>
   <div class="verdict" id="advice" style="margin-top:10px"></div><div class="btns" id="gobtns"></div>
-  <p class="note" style="margin-top:8px">Düğmeler Google Haritalar'ı açar; otelin oraya yazılmış gelir. Toplu taşıma tarifinde otele en yakın durağı ve yürüme mesafesini görürsün.</p></section>`;
+  <p class="note" style="margin-top:8px">İlk düğme rotayı bu sayfadaki haritada çizer, mesafeyi ve süreyi gösterir. Adım adım otobüs tarifi açık haritada olmadığı için ikinci düğme Google Haritalar'ı açar.</p></section>`;
   // 3 uygulamalar
   h+=`<section id="uygulamalar">${plate(3,"Ulaşım uygulamaları")}<p class="intro">Phuket'te şehir içinde bu uygulamalar kullanılıyor. Fiyatı binmeden gösterirler; ikisini de açıp karşılaştırmak en sağlamı.</p><div class="stack">`
     +C.apps.map(a=>`<div class="card"><h3>${esc(a.t)}</h3>${a.pick?`<div class="meta"><span class="tag pick">${esc(a.pick)}</span></div>`:""}<p>${esc(a.d)}</p><div class="btns">${link(a.url,a.t+" uygulamasını indir",1)}</div></div>`).join("")
     +`<div class="verdict caution"><b class="h">Bilmen gerekenler</b><ul class="plain">${C.appNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div></div></section>`;
   // 4 döviz
   h+=`<section id="doviz">${plate(4,"Döviz")}<div class="stack"><div class="verdict"><b class="h">En makulü</b>${esc(C.fx.verdict)}</div><div class="card" id="rate" hidden></div>`
-    +C.fx.places.map(p=>`<div class="card"><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p>${p.q?`<div class="btns">${link(gSearch(p.q,""),"Haritada göster",1)}</div>`:""}</div>`).join("")
-    +`<div class="card"><h3>İpuçları</h3><ul class="plain">${C.fx.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul><div class="btns">${link(gSearch("currency exchange"),"Bana en yakın döviz bürosu")}</div></div></div></section>`;
+    +C.fx.places.map(p=>`<div class="card"><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p></div>`).join("")
+    +`<div class="card"><h3>İpuçları</h3><ul class="plain">${C.fx.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul><div class="btns"><button type="button" class="btn" data-act="fx">Döviz bürolarını haritada göster</button>${link(gSearch("currency exchange"),"Google'da puanlarına bak",1)}</div></div></div></section>`;
   // 5 gezi
   h+=`<section id="gezi">${plate(5,"Gezilecek yerler")}<div class="stack">`
-    +C.sights.map(s=>`<div class="card"><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="btns">${link(gPlace(s.t),"Haritada aç",1)}</div></div>`).join("")+`</div></section>`;
+    +C.sights.map((s,i)=>`<div class="card"><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="btns"><button type="button" class="btn" data-act="sight" data-i="${i}">Haritada göster</button></div></div>`).join("")+`</div></section>`;
   // 6 turlar
   h+=`<section id="turlar">${plate(6,"Günlük turlar")}<p class="intro">Fiyatlar kişi başı, ortak tur için yaklaşık aralıktır. Aynı tur farklı sitelerde farklı fiyata satılır, almadan önce iki siteye bak.</p><div class="stack">`
     +C.tours.map(t=>`<div class="card"><h3>${esc(t.t)}</h3><div class="meta"><span class="tag where">${esc(t.from)}</span><span class="tag price">${esc(t.price)}</span></div><p>${esc(t.d)}</p></div>`).join("")
@@ -367,17 +367,17 @@ function render(){
     <div class="tw"><table><thead><tr><th>Fiyatlar nereden başlıyor</th><th>Gecelik</th></tr></thead><tbody>${C.stayPrices.map(p=>`<tr><td>${esc(p[0])}</td><td class="n">${esc(p[1])}</td></tr>`).join("")}</tbody></table></div>`
     +C.stay.map(s=>`<div class="card"><h3>${esc(s.t)}</h3><div class="meta"><span class="tag">${esc(s.who)}</span></div><p>${esc(s.d)}</p></div>`).join("")+`</div></section>`;
   // 9 yemek
-  h+=`<section id="yemek">${plate(9,"Yemek")}<p class="intro">Bayrağa bas, o mutfağın sana en yakın restoranlarını Google puanlarıyla aç.</p>
+  h+=`<section id="yemek">${plate(9,"Yemek")}<p class="intro">Bayrağa bas, o mutfağın restoranlarını bu sayfadaki haritada gör. Puanlar için yanındaki Google düğmesini kullan.</p>
     <div class="flags" id="flags" role="group" aria-label="Mutfak seç">${CUISINES.map((c,i)=>`<button type="button" class="flag" data-i="${i}" aria-pressed="false"><span class="f">${c.f}</span><span class="t">${esc(c.t)}</span></button>`).join("")}</div>
     <div class="chips" id="diets" role="group" aria-label="Beslenme tercihi">${DIETS.map((d,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="false">${esc(d.t)}</button>`).join("")}</div>
     <div class="btns" id="foodbtns"></div></section>`;
   // 10 lazım
   h+=`<section id="lazim">${plate(10,"Lazım olanlar")}<div class="stack">`
-    +C.needs.map((n,i)=>`<div class="card"><h3>${esc(n.t)}</h3><p>${esc(n.d)}</p><div class="btns">${link(gSearch(n.q),"En yakını bul")}<button type="button" class="btn alt onmap" data-need="${i}">Haritada göster</button></div></div>`).join("")+`</div></section>`;
+    +C.needs.map((n,i)=>`<div class="card"><h3>${esc(n.t)}</h3><p>${esc(n.d)}</p><div class="btns"><button type="button" class="btn onmap" data-need="${i}">Haritada göster</button>${link(gSearch(n.q),"Google'da puanlarına bak",1)}</div></div>`).join("")+`</div></section>`;
   // 11 harita
   h+=`<section id="harita">${plate(11,"Harita")}<div id="mapwrap"><div id="map" aria-label="${esc(C.name)} haritası"></div>
     <div class="legend"><span><i class="dot" style="background:#111418"></i>Havalimanı</span><span><i class="dot" style="background:#c9a400"></i>Gezilecek yer</span><span><i class="dot" style="background:#1c7a4c"></i>Bölgeler</span><span><i class="dot" style="background:#c0392b"></i>Arama sonucu</span><span><i class="dot" style="background:#1a73e8"></i>Sen</span></div>
-    <div class="btns"><button type="button" class="btn alt" id="locate">Konumumu göster</button></div><p class="note" id="mapmsg" role="status"></p></div>
+    <div class="btns"><button type="button" class="btn alt" id="locate">Konumumu göster</button></div><p class="note" id="mapmsg" role="status"></p><div class="stack" id="maplist"></div></div>
     <div class="verdict caution" id="mapnote"><b class="h">Harita bu önizlemede kapalı</b>Bu sayfa şu an Claude'un içinde açık ve burası dışarıdan harita yüklenmesine izin vermiyor. Sayfa kendi adresine taşındığında harita, konumun ve yakındaki yerler burada görünecek. O zamana kadar yukarıdaki düğmeler Google Haritalar'da açılır.</div></section>`;
   $("main").innerHTML=h;
   $("foot").innerHTML=`<p><b>Son kontrol: ${esc(C.checked)}.</b> Fiyatlar ve biniş noktaları değişir; buradaki rakamlar yaklaşık aralıktır, tabelada ve uygulamada gördüğün geçerlidir.</p><p>Kaynaklar: ${C.sources.map(s=>`<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ")}</p><p>Harita verisi © OpenStreetMap katkıcıları.</p>`;
@@ -390,7 +390,8 @@ function updateGo(){
   $("advice").innerHTML=`<b class="h">Sana önerimiz: ${esc(a.pick)}</b>${esc(a.why)}`;
   const z=C.zones.find(x=>x.id===zone);
   const dest=hotel?hotel+", "+C.name:(z&&z.id!=="other"?z.n.split(" /")[0]+", "+C.name:C.name);
-  $("gobtns").innerHTML=link(gDir(dest,"transit"),"Toplu taşıma tarifi")+link(gDir(dest,"driving"),"Araba rotası ve mesafe",1);
+  $("gobtns").innerHTML=`<button type="button" class="btn" id="routebtn">Rotayı haritada çiz</button>`+link(gDir(dest,"transit"),"Adım adım otobüs tarifi (Google)",1);
+  $("routebtn").addEventListener("click",()=>routeTo(hotel,z));
   store.set("hotel",hotel); store.set("zone",zone);
 }
 
@@ -401,13 +402,13 @@ function updateFood(){
   document.querySelectorAll("#diets .chip").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.i===diet)));
   const c=CUISINES[cui], d=diet>=0?DIETS[diet]:null;
   const q=(d?d.q+" ":"")+c.q, label=(d?d.t.toLowerCase()+" ":"")+c.t;
-  $("foodbtns").innerHTML=link(gSearch(q),"Bana en yakın "+label+" restoranları")+link(gSearch(q,C.name),C.name+" genelinde ara",1)+`<button type="button" class="btn alt" id="foodmap">Haritada göster</button>`;
+  $("foodbtns").innerHTML=`<button type="button" class="btn" id="foodmap">${esc(label)} restoranlarını haritada göster</button>`+link(gSearch(q),"Google puanlarıyla aç",1);
   $("foodmap").addEventListener("click",()=>{ const sel='nwr["amenity"~"restaurant|fast_food|cafe"]["cuisine"~"'+c.o+'",i]'+(d&&d.o.indexOf("cuisine")<0?d.o:""); overpass(sel,label+" restoranları"); });
   store.set("cui",String(cui));
 }
 
 /* ---------- harita ---------- */
-let map=null, results=null, me=null, mapOK=false;
+let map=null, results=null, me=null, meLL=null, mapOK=false, sightPins=[], lastItems=null;
 function mapFail(){ $("mapwrap").style.display="none"; $("mapnote").style.display="block"; mapOK=false; }
 function initMap(){
   if(typeof L==="undefined") return mapFail();
@@ -420,41 +421,75 @@ function initMap(){
     setTimeout(()=>{ if(!loaded) mapFail(); },6000);
     const pin=(ll,color,html,r)=>L.circleMarker(ll,{radius:r||7,color:"#fff",weight:2,fillColor:color,fillOpacity:1}).addTo(map).bindPopup(html);
     pin(C.airport.ll,"#111418","<b>"+esc(C.airport.name)+"</b>",9);
-    C.sights.forEach(s=>pin(s.ll,"#c9a400","<b>"+esc(s.t)+"</b><br>"+esc(s.d)+'<br><a href="'+esc(gPlace(s.t))+'" target="_blank" rel="noopener">Google Haritalar\'da aç</a>'));
+    sightPins=C.sights.map(s=>pin(s.ll,"#c9a400","<b>"+esc(s.t)+"</b><br>"+esc(s.d)+'<br><a href="'+esc(gPlace(s.t))+'" target="_blank" rel="noopener">Google Haritalar\'da aç</a>'));
     C.zones.filter(z=>z.ll).forEach(z=>pin(z.ll,"#1c7a4c","<b>"+esc(z.n)+"</b>",6));
     results=L.layerGroup().addTo(map);
   }catch(e){ mapFail(); }
 }
+function showMap(){ $("harita").scrollIntoView(); if(map) setTimeout(()=>map.invalidateSize(),80); }
+function dist(a,b){ const R=6371000,t=Math.PI/180,dl=(b[0]-a[0])*t,dn=(b[1]-a[1])*t; const x=Math.sin(dl/2)**2+Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dn/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
+const fmtD=m=>m<1000?Math.round(m/10)*10+" m":(m/1000).toFixed(1).replace(".",",")+" km";
+function drawList(){
+  const list=$("maplist"); if(!lastItems){ list.innerHTML=""; return; }
+  if(meLL){ lastItems.forEach(it=>it.d=dist(meLL,it.ll)); lastItems.sort((a,b)=>a.d-b.d); }
+  list.innerHTML=lastItems.slice(0,8).map((it,i)=>`<div class="card"><h3>${esc(it.name)}</h3><div class="meta">${it.d!=null?`<span class="tag price">${fmtD(it.d)} uzakta</span>`:""}</div><div class="btns"><button type="button" class="btn alt" data-r="${i}">Haritada göster</button></div></div>`).join("");
+}
+function focusSight(i){ showMap(); if(!map||!mapOK) return; map.setView(C.sights[i].ll,15); if(sightPins[i]) sightPins[i].openPopup(); }
 async function overpass(selector,label){
-  location.hash="harita";
+  showMap();
   if(!map||!mapOK){ return; }
-  const msg=$("mapmsg"); msg.textContent=label+" aranıyor…";
-  const q="[out:json][timeout:20];"+selector+"("+C.bbox.join(",")+");out center 80;";
+  const msg=$("mapmsg"); lastItems=null; drawList(); msg.textContent=label+" aranıyor…";
+  const q="[out:json][timeout:20];"+selector+"("+C.bbox.join(",")+");out center 120;";
   try{
     const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+enc(q),headers:{"Content-Type":"application/x-www-form-urlencoded"}});
     if(!r.ok) throw new Error(r.status);
     const j=await r.json(); results.clearLayers();
-    const pts=[];
+    const items=[];
     (j.elements||[]).forEach(e=>{
       const lat=e.lat||(e.center&&e.center.lat), lon=e.lon||(e.center&&e.center.lon); if(!lat) return;
       const name=(e.tags&&(e.tags["name:en"]||e.tags.name))||label;
-      L.circleMarker([lat,lon],{radius:7,color:"#fff",weight:2,fillColor:"#c0392b",fillOpacity:1}).addTo(results)
+      const m=L.circleMarker([lat,lon],{radius:7,color:"#fff",weight:2,fillColor:"#c0392b",fillOpacity:1}).addTo(results)
         .bindPopup("<b>"+esc(name)+'</b><br><a href="https://www.google.com/maps/search/?api=1&query='+enc(name+" "+C.name)+'" target="_blank" rel="noopener">Google\'da puanını gör</a>');
-      pts.push([lat,lon]);
+      items.push({name:name,ll:[lat,lon],m:m,d:null});
     });
-    if(pts.length){ map.fitBounds(pts,{padding:[30,30],maxZoom:15}); msg.textContent=pts.length+" yer bulundu: "+label+". Noktaya dokun, Google puanına oradan geç."; }
-    else msg.textContent="Açık haritada kayıtlı "+label+" bulunamadı. Yukarıdaki Google düğmesini dene; Google'ın listesi daha geniştir.";
-  }catch(e){ msg.textContent="Arama şu an yapılamadı. Biraz sonra tekrar dene ya da Google düğmesini kullan."; }
+    if(items.length){
+      lastItems=items; drawList();
+      const fit=meLL?lastItems.slice(0,10).map(i=>i.ll).concat([meLL]):items.map(i=>i.ll);
+      map.fitBounds(fit,{padding:[30,30],maxZoom:15});
+      msg.textContent=items.length+" yer bulundu: "+label+". "+(meLL?"Sana en yakınlar aşağıda sıralı.":"'Konumumu göster'e basarsan sana en yakınlar sıralanır.");
+    } else msg.textContent="Açık haritada kayıtlı "+label+" bulunamadı. Google düğmesini dene; Google'ın listesi daha geniştir.";
+  }catch(e){ msg.textContent="Arama şu an yapılamadı. Biraz sonra tekrar dene."; }
+}
+async function routeTo(hotel,z){
+  showMap(); if(!map||!mapOK) return;
+  const msg=$("mapmsg"); lastItems=null; drawList(); results.clearLayers(); msg.textContent="Rota hesaplanıyor…";
+  try{
+    let dest=null, name=hotel, approx=false;
+    if(hotel){
+      const vb=[C.bbox[1],C.bbox[2],C.bbox[3],C.bbox[0]].join(",");
+      const r=await fetch("https://nominatim.openstreetmap.org/search?format=jsonv2&limit=1&bounded=1&viewbox="+vb+"&q="+enc(hotel));
+      const j=await r.json(); if(j&&j[0]) dest=[+j[0].lat,+j[0].lon];
+    }
+    if(!dest&&z&&z.ll){ dest=z.ll; approx=true; name=z.n; }
+    if(!dest){ msg.textContent="Oteli açık haritada bulamadım. Adını İngilizce ve tam yaz ya da bölgeyi seç."; return; }
+    const a=C.airport.ll;
+    const r2=await fetch("https://router.project-osrm.org/route/v1/driving/"+a[1]+","+a[0]+";"+dest[1]+","+dest[0]+"?overview=full&geometries=geojson");
+    const j2=await r2.json(); const rt=j2.routes&&j2.routes[0]; if(!rt) throw new Error("rota yok");
+    const line=L.geoJSON(rt.geometry,{style:{color:"#1a73e8",weight:5,opacity:.85}}).addTo(results);
+    L.circleMarker(dest,{radius:9,color:"#fff",weight:3,fillColor:"#c0392b",fillOpacity:1}).addTo(results).bindPopup("<b>"+esc(name)+"</b>").openPopup();
+    map.fitBounds(line.getBounds(),{padding:[30,30]});
+    msg.textContent=(approx?(hotel?"Oteli açık haritada bulamadım, "+name+" merkezine göre çizdim. ":name+" merkezine göre çizdim. "):"")+"Havalimanından "+Math.round(rt.distance/1000)+" km, trafiksiz yaklaşık "+Math.round(rt.duration/60)+" dk araç yolu.";
+  }catch(e){ msg.textContent="Rota şu an çizilemedi. Biraz sonra tekrar dene."; }
 }
 function locate(){
   const msg=$("mapmsg");
   if(!navigator.geolocation||!map){ msg.textContent="Bu cihazda konum alınamıyor."; return; }
   msg.textContent="Konumun alınıyor…";
   navigator.geolocation.getCurrentPosition(p=>{
-    const ll=[p.coords.latitude,p.coords.longitude];
+    const ll=[p.coords.latitude,p.coords.longitude]; meLL=ll;
     if(me) map.removeLayer(me);
     me=L.circleMarker(ll,{radius:9,color:"#fff",weight:3,fillColor:"#1a73e8",fillOpacity:1}).addTo(map).bindPopup("Buradasın");
-    map.setView(ll,14); msg.textContent="Konumun haritada mavi nokta olarak işaretlendi.";
+    map.setView(ll,14); msg.textContent="Konumun haritada mavi nokta olarak işaretlendi."+(lastItems?" Liste sana en yakına göre sıralandı.":""); drawList();
   },()=>{ msg.textContent="Konum izni verilmedi. Tarayıcı ayarlarından izin verip tekrar dene."; },{enableHighAccuracy:true,timeout:10000});
 }
 
@@ -483,6 +518,8 @@ $("diets").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(!b
 updateFood();
 document.querySelectorAll(".onmap").forEach(b=>b.addEventListener("click",()=>{const n=C.needs[+b.dataset.need]; overpass(n.osm,n.t);}));
 $("locate").addEventListener("click",locate);
+$("main").addEventListener("click",e=>{const b=e.target.closest("[data-act]"); if(!b) return; if(b.dataset.act==="sight") focusSight(+b.dataset.i); else if(b.dataset.act==="fx") overpass('nwr["amenity"="bureau_de_change"]',"döviz büroları");});
+$("maplist").addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(!b||!lastItems) return; const it=lastItems[+b.dataset.r]; if(!it) return; $("map").scrollIntoView({block:"center"}); map.setView(it.ll,16); it.m.openPopup();});
 initMap();
 loadRate();
 </script>
