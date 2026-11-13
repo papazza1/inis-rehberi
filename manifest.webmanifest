@@ -1,0 +1,15 @@
+{
+  "name": "İniş Rehberi",
+  "short_name": "İniş Rehberi",
+  "description": "İndiğin şehirde ilk gün lazım olan her şey.",
+  "lang": "tr",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#111418",
+  "theme_color": "#111418",
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

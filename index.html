@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>İniş Rehberi</title>
+<meta name="theme-color" content="#111418">
+<meta name="description" content="Havalimanından çıkıştan otele, dövizden turlara: indiğin şehirde ilk gün lazım olan her şey.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-180.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="İniş Rehberi">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+/* Düzen fikri: havalimanı yön tabelası. Sarı levhalar bölüm başlığı, kat/kapı bilgisi siyah rozet, tek sütun telefon akışı. */
+:root{
+  --paper:#eceff1; --panel:#ffffff; --ink:#14181c; --muted:#56616b; --line:#cdd4d9;
+  --sign:#ffd200; --sign-ink:#111418; --good:#1c7a4c; --warn:#a8500f;
+  --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#0f1418; --panel:#192027; --ink:#edf1f3; --muted:#9ba7b1; --line:#2d3740;
+    --good:#58c48f; --warn:#f0a35c; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0f1418; --panel:#192027; --ink:#edf1f3; --muted:#9ba7b1; --line:#2d3740;
+  --good:#58c48f; --warn:#f0a35c; color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:64px}
+@media (prefers-reduced-motion: reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5}
+img{max-width:100%}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sign);outline-offset:2px}
+.wrap{max-width:720px;margin:0 auto;padding:0 16px}
+
+.top{background:var(--sign-ink);color:#fff;padding:14px 0 16px}
+.top .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:.08em;text-transform:uppercase}
+.brand b{background:var(--sign);color:var(--sign-ink);padding:1px 7px;margin-right:6px}
+.cities{display:flex;gap:6px;flex-wrap:wrap}
+.city{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.05em;text-transform:uppercase;padding:3px 10px;border:1px solid #58636d;color:#aeb8c0}
+.city.on{background:var(--sign);color:var(--sign-ink);border-color:var(--sign)}
+h1{font-family:var(--display);font-weight:700;font-size:44px;line-height:1;margin:22px 0 8px;text-transform:uppercase;text-wrap:balance}
+.lede{color:#c9d1d7;margin:0 0 14px;max-width:52ch}
+.facts{display:flex;gap:8px;flex-wrap:wrap;margin:0;padding:0;list-style:none}
+.facts li{border:1px solid #58636d;padding:4px 10px;font-size:14px}
+.facts b{font-family:var(--display);font-size:16px;letter-spacing:.04em;color:var(--sign);margin-right:6px}
+
+nav{position:sticky;top:0;z-index:1200;background:var(--sign);border-bottom:2px solid var(--sign-ink)}
+nav .wrap{display:flex;gap:4px;overflow-x:auto;padding-top:8px;padding-bottom:8px;scrollbar-width:none}
+nav .wrap::-webkit-scrollbar{display:none}
+nav a{flex:none;font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;color:var(--sign-ink);padding:4px 10px;border:2px solid transparent}
+nav a:hover{border-color:var(--sign-ink)}
+
+section{padding:26px 0 6px}
+.plate{display:flex;align-items:stretch;margin:0 0 14px}
+.plate .no{background:var(--sign-ink);color:var(--sign);font-family:var(--display);font-weight:700;font-size:22px;padding:6px 10px;min-width:44px;text-align:center}
+.plate h2{flex:1;margin:0;background:var(--sign);color:var(--sign-ink);font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:.03em;text-transform:uppercase;padding:6px 12px;line-height:1.15}
+.intro{margin:0 0 14px;color:var(--muted);max-width:62ch}
+.stack{display:flex;flex-direction:column;gap:10px}
+.card{background:var(--panel);border:1px solid var(--line);padding:14px}
+.card h3{margin:0 0 4px;font-size:18px;font-weight:600}
+.card p{margin:6px 0 0}
+.meta{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.tag{font-family:var(--display);font-weight:600;font-size:15px;letter-spacing:.03em;padding:1px 8px;border:1px solid var(--line);white-space:nowrap}
+.tag.where{background:var(--sign-ink);color:#fff;border-color:var(--sign-ink)}
+.tag.price{font-variant-numeric:tabular-nums}
+.tag.pick{background:var(--good);color:#fff;border-color:var(--good)}
+.note{font-size:14px;color:var(--muted)}
+.verdict{border-left:6px solid var(--good);background:var(--panel);padding:12px 14px;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line)}
+.verdict b.h{display:block;font-family:var(--display);font-size:17px;letter-spacing:.05em;text-transform:uppercase;color:var(--good)}
+.caution{border-left-color:var(--warn)}
+.caution b.h{color:var(--warn)}
+ul.plain{margin:6px 0 0;padding-left:18px}
+ul.plain li{margin:3px 0}
+
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.btn{display:inline-block;font-family:var(--display);font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;padding:8px 12px;background:var(--sign-ink);color:#fff;border:2px solid var(--sign-ink);cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn:hover{background:var(--sign);color:var(--sign-ink)}
+:root[data-theme="dark"] .btn,.dk .btn{}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn:not(.alt){background:var(--sign);color:var(--sign-ink);border-color:var(--sign)}}
+:root[data-theme="dark"] .btn:not(.alt){background:var(--sign);color:var(--sign-ink);border-color:var(--sign)}
+
+form.go{display:grid;gap:10px}
+label{font-weight:600;font-size:14px;display:block;margin-bottom:4px}
+input[type=text],select{width:100%;font:inherit;padding:10px;border:2px solid var(--ink);background:var(--panel);color:var(--ink);border-radius:0}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:420px){.two{grid-template-columns:1fr} h1{font-size:36px}}
+
+.flags{display:flex;gap:6px;overflow-x:auto;padding-bottom:6px}
+.flag{flex:none;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:62px;padding:6px 6px 4px;background:var(--panel);border:2px solid var(--line);font:inherit;color:var(--ink);cursor:pointer}
+.flag span.f{font-size:26px;line-height:1.1}
+.flag span.t{font-size:12px;font-weight:600}
+.flag[aria-pressed="true"]{border-color:var(--ink);background:var(--sign);color:var(--sign-ink)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.chip{font:inherit;font-size:14px;font-weight:600;padding:5px 10px;background:var(--panel);border:2px solid var(--line);color:var(--ink);cursor:pointer}
+.chip[aria-pressed="true"]{border-color:var(--ink);background:var(--sign);color:var(--sign-ink)}
+
+table{width:100%;border-collapse:collapse;font-size:15px}
+.tw{overflow-x:auto;background:var(--panel);border:1px solid var(--line)}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-family:var(--display);font-size:15px;letter-spacing:.05em;text-transform:uppercase;color:var(--muted)}
+tr:last-child td{border-bottom:0}
+td.n{font-variant-numeric:tabular-nums;white-space:nowrap}
+
+#map{height:340px;border:2px solid var(--ink);background:var(--panel)}
+#mapnote{display:none}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:13px;color:var(--muted);margin-top:6px}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px;vertical-align:middle}
+
+footer{margin-top:30px;padding:20px 0 40px;border-top:2px solid var(--ink);font-size:14px;color:var(--muted)}
+footer a{word-break:break-word}
+
+/* Leaflet'in çalışması için gereken asgari stil */
+.leaflet-pane,.leaflet-tile,.leaflet-marker-icon,.leaflet-marker-shadow,.leaflet-tile-container,.leaflet-pane>svg,.leaflet-pane>canvas,.leaflet-zoom-box,.leaflet-image-layer,.leaflet-layer{position:absolute;left:0;top:0}
+.leaflet-container{overflow:hidden;position:relative;-webkit-tap-highlight-color:transparent;font:13px/1.4 var(--body)}
+.leaflet-container img{max-width:none!important;max-height:none!important}
+.leaflet-tile{user-select:none;-webkit-user-drag:none;visibility:hidden}
+.leaflet-tile-loaded{visibility:inherit}
+.leaflet-container.leaflet-touch-zoom{touch-action:pan-x pan-y}
+.leaflet-container.leaflet-touch-drag{touch-action:pinch-zoom}
+.leaflet-container.leaflet-touch-drag.leaflet-touch-zoom{touch-action:none}
+.leaflet-pane{z-index:400}.leaflet-tile-pane{z-index:200}.leaflet-overlay-pane{z-index:400}.leaflet-shadow-pane{z-index:500}.leaflet-marker-pane{z-index:600}.leaflet-tooltip-pane{z-index:650}.leaflet-popup-pane{z-index:700}
+.leaflet-map-pane canvas{z-index:100}.leaflet-map-pane svg{z-index:200}
+.leaflet-zoom-animated{transform-origin:0 0}
+.leaflet-zoom-anim .leaflet-zoom-animated{transition:transform .25s cubic-bezier(0,0,.25,1)}
+.leaflet-zoom-hide{visibility:hidden}
+.leaflet-interactive{cursor:pointer}.leaflet-grab{cursor:grab}
+.leaflet-top,.leaflet-bottom{position:absolute;z-index:1000;pointer-events:none}
+.leaflet-top{top:0}.leaflet-right{right:0}.leaflet-bottom{bottom:0}.leaflet-left{left:0}
+.leaflet-control{position:relative;z-index:800;pointer-events:auto;float:left;clear:both}
+.leaflet-right .leaflet-control{float:right}
+.leaflet-top .leaflet-control{margin-top:10px}.leaflet-left .leaflet-control{margin-left:10px}
+.leaflet-bar a{display:block;width:32px;height:32px;line-height:32px;text-align:center;text-decoration:none;background:#fff;color:#000;border:1px solid #999;font:700 18px/32px Arial}
+.leaflet-control-attribution{background:rgba(255,255,255,.85);color:#333;padding:0 5px;font-size:11px}
+.leaflet-control-attribution a{color:#0b57a4}
+.leaflet-popup{position:absolute;text-align:center;margin-bottom:18px}
+.leaflet-popup-content-wrapper{background:#fff;color:#111;text-align:left;box-shadow:0 2px 10px rgba(0,0,0,.35)}
+.leaflet-popup-content{margin:10px 26px 10px 12px;line-height:1.35}
+.leaflet-popup-content a{color:#0b57a4}
+.leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-left:-20px;overflow:hidden;pointer-events:none}
+.leaflet-popup-tip{width:15px;height:15px;margin:-8px auto 0;transform:rotate(45deg);background:#fff}
+a.leaflet-popup-close-button{position:absolute;top:0;right:0;width:24px;height:24px;font:18px/24px Arial;text-align:center;color:#555;text-decoration:none}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="row">
+      <div class="brand"><b>→</b>İniş Rehberi</div>
+      <div class="cities" id="cities"></div>
+    </div>
+    <h1 id="h1"></h1>
+    <p class="lede" id="lede"></p>
+    <ul class="facts" id="facts"></ul>
+  </div>
+</header>
+<nav aria-label="Bölümler"><div class="wrap" id="nav"></div></nav>
+<main class="wrap" id="main"></main>
+<footer><div class="wrap" id="foot"></div></footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+"use strict";
+/* ---------- ŞEHİR VERİSİ: yeni şehir eklemek = bu nesneden bir tane daha ---------- */
+const PHUKET = {
+  id:"phuket", name:"Phuket", country:"Tayland", checked:"13 Kasım 2026",
+  airport:{name:"Phuket Uluslararası Havalimanı", code:"HKT", q:"Phuket International Airport", ll:[8.1132,98.3169]},
+  bbox:[7.74,98.25,8.20,98.45], center:[7.95,98.34], zoom:11,
+  headline:"Phuket'e indin. Şimdi ne yapacaksın?",
+  lede:"Havalimanından çıkıştan otele, dövizden turlara kadar ilk gün lazım olan her şey tek sayfada.",
+  facts:[["Para","Tayland bahtı (THB)"],["Patong","41 km, yaklaşık 50 dk"],["Raylı sistem","Yok"]],
+  exits:[
+    {t:"Phuket Smart Bus", where:"Çıkışta Smart Bus tabelası", price:"100 THB / kişi", time:"Patong 1,5–2 saat",
+     d:"Batı sahili boyunca gider: Cherngtalay, Surin, Kamala, Patong, Karon, Kata, Rawai. Saat başı kalkar, son sefer 23:30. Nereye inersen in fiyat aynı."},
+    {t:"Havalimanı otobüsü (Phuket Town)", where:"Terminal önü otobüs durağı", price:"100 THB / kişi", time:"Yaklaşık 1 sa 30 dk",
+     d:"Old Town'daki 1 numaralı otobüs terminaline gider. Yaklaşık 08:30–20:30 arası saat başı."},
+    {t:"Sabit fiyatlı taksi tezgâhı", where:"Geliş salonunun içinde", price:"Patong 800 · Kata/Karon 1.000 THB", time:"Patong yaklaşık 50 dk", pick:1,
+     d:"Phuket Airport Limousine. Fiyat bölgeye göre tabelada yazar, pazarlık yok. 3 kişilik araç fiyatıdır; 4 kişilik SUV Patong'a 1.200, 10 kişilik minibüs 1.400 THB."},
+    {t:"Taksimetre", where:"Geliş salonu dışı, taksi durağı", price:"Patong 600–700 + 100 THB", time:"Patong yaklaşık 50 dk",
+     d:"Taksimetrenin üstüne 100 THB havalimanı ücreti eklenir. Binmeden taksimetrenin açıldığını gör."},
+    {t:"Grab", where:"Dış hatlar: 8 no'lu çıkış, yeşil çatılı nokta · İç hatlar: 1 no'lu çıkış yanı", price:"Patong yaklaşık 750–950 THB", time:"Patong yaklaşık 50 dk",
+     d:"Havalimanında resmi biniş noktası olan tek uygulama. Fiyatı binmeden görürsün. Biniş noktası değişebilir, uygulamanın gösterdiği yolu izle."},
+    {t:"Bolt", where:"Terminalden yaklaşık 300 m yürüyüş", price:"Patong yaklaşık 550–680 THB", time:"Patong yaklaşık 50 dk",
+     d:"Genelde Grab'den %15–30 ucuz ama havalimanına resmi girişi yok; bavulla yürümen gerekir, sürücü sayısı da daha az."},
+    {t:"Paylaşımlı minibüs", where:"Geliş salonundaki tezgâhlar", price:"Yaklaşık 180 THB / koltuk", time:"Diğer yolcuları bekler",
+     d:"Koltuk dolunca kalkar ve herkesi oteline tek tek bırakır. Ucuz ama süresi belirsiz."}
+  ],
+  exitVerdict:"Bir ya da iki kişiysen ve acelen yoksa Smart Bus açık ara en ucuzu. Üç kişi ve üstü, gece inişi ya da ağır bavul varsa salondaki sabit fiyatlı tezgâh en zahmetsizi. Uygulama kullanacaksan yağmurda ve bavulla Grab, hafif çantayla Bolt.",
+  zones:[
+    {id:"patong", n:"Patong", bus:"smart", fixed:800, ll:[7.8961,98.2966]},
+    {id:"karon", n:"Karon", bus:"smart", fixed:1000, ll:[7.8467,98.2948]},
+    {id:"kata", n:"Kata", bus:"smart", fixed:1000, ll:[7.8206,98.2985]},
+    {id:"kamala", n:"Kamala", bus:"smart", ll:[7.9506,98.2836]},
+    {id:"surin", n:"Surin / Bang Tao (Cherngtalay)", bus:"smart", ll:[7.9760,98.2790]},
+    {id:"rawai", n:"Rawai / Nai Harn", bus:"smart", ll:[7.7790,98.3250]},
+    {id:"town", n:"Phuket Old Town", bus:"town", ll:[7.8847,98.3890]},
+    {id:"near", n:"Nai Yang / Mai Khao (havalimanı yanı)", bus:"none", ll:[8.0900,98.2990]},
+    {id:"other", n:"Başka bir bölge", bus:"none"}
+  ],
+  apps:[
+    {t:"Grab", pick:"En yaygın", d:"Turistlerin en çok kullandığı uygulama. En çok sürücü burada, havalimanında resmi biniş noktası var. Genelde en pahalısı.", url:"https://www.grab.com/th/en/download/"},
+    {t:"Bolt", pick:"Daha ucuz", d:"Yerlilerin ve uzun kalanların tercihi. Plajlar arası kısa yolculuklarda fiyat farkı belirgin. Sürücü bulmak bazen uzun sürer.", url:"https://bolt.eu/"},
+    {t:"inDrive", d:"Fiyatı sen teklif edersin, sürücü kabul eder ya da karşı teklif verir. Pazarlığı sevenler için.", url:"https://indrive.com/"}
+  ],
+  appNotes:["Uygulamaları inmeden önce indir ve kartını ekle; Tayland'da SMS doğrulaması gerekebilir.","Phuket'te taksi Bangkok'a göre pahalıdır, fiyatlara şaşırma.","Songthaew (üstü kapalı kamyonet) Kata, Karon ve Patong arasında kişi başı 30–50 THB.","Mavi yerel otobüsler Phuket Town'dan plajlara gider ama plajlar arasında çalışmaz.","Sokaktaki tuk-tuk'a binmeden fiyatı konuş."],
+  fx:{
+    verdict:"Havalimanında sadece ilk masraflara yetecek kadar bozdur, gerisini Patong ya da Phuket Town'daki döviz bürolarında boz. Şehirdeki kur belirgin şekilde daha iyi.",
+    places:[
+      {t:"Havalimanı", d:"Geliş katındaki banka gişeleri en kötü kuru verir. İç hatlar geliş salonundaki SuperRich'in şehirle aynı kuru verdiği bildiriliyor (07:00–22:30)."},
+      {t:"Patong", d:"Rat-U-Thit yolu ve sahil yolu boyunca onlarca büro yan yana. Rekabet kuru iyileştiriyor; iki üç tabelaya bakıp en iyisinde boz.", q:"currency exchange Patong"},
+      {t:"Phuket Town", d:"SuperRich'in Chaofa yolu şubesi adanın en iyi kurlarından birini verir. Sırf bunun için taksiyle gitmeye değmez, yolun düşerse uğra.", q:"Superrich Phuket Town Chaofa Road"},
+      {t:"Otel resepsiyonu", d:"Kur genelde kötüdür, zorda kalmadıkça kullanma."}
+    ],
+    tips:["Pasaportunu yanına al, döviz bozdururken istenir.","Büyük banknotlar (100 dolar, 100 avro) daha iyi kur alır.","Yırtık, lekeli ya da eski seri banknotlar kabul edilmeyebilir.","Yabancı kartla ATM'den çekimde her işlemde sabit ücret kesilir; az sayıda büyük çekim yap."]
+  },
+  sights:[
+    {t:"Big Buddha", d:"Tepedeki 45 metrelik heykel, adanın güneyini gören manzara. Omuz ve diz kapalı gir.", ll:[7.8276,98.3128]},
+    {t:"Wat Chalong", d:"Adanın en büyük ve en çok ziyaret edilen tapınağı. Giriş ücretsiz.", ll:[7.8468,98.3369]},
+    {t:"Phuket Old Town", d:"Renkli Çin-Portekiz evleri, kafeler, Thalang yolu. Pazar akşamı yürüyüş pazarı kurulur.", ll:[7.8847,98.3890]},
+    {t:"Promthep Burnu", d:"Adanın en güney ucu, gün batımının klasik noktası.", ll:[7.7632,98.3055]},
+    {t:"Karon Seyir Noktası", d:"Kata Noi, Kata ve Karon koylarını aynı karede görürsün.", ll:[7.8080,98.3020]},
+    {t:"Bangla Yolu", d:"Patong'un gece hayatı caddesi, akşam trafiğe kapanır.", ll:[7.8935,98.2965]},
+    {t:"Nai Harn Plajı", d:"Güneyde, Patong'a göre sakin, yerlilerin sevdiği plaj.", ll:[7.7780,98.3040]},
+    {t:"Kata Noi Plajı", d:"Küçük, temiz ve görece sakin bir koy.", ll:[7.8080,98.2980]}
+  ],
+  tours:[
+    {t:"Phi Phi Adaları", price:"1.800–3.500 THB", from:"Royal Phuket Marina, Chalong ya da Rassada iskelesi", d:"Maya Koyu, Pileh Lagünü, şnorkel. Sürat teknesiyle 45 dk, büyük tekneyle 1,5–2 saat. En erken kalkan tur Maya Koyu'na kalabalıktan önce varır."},
+    {t:"James Bond Adası ve Phang Nga Koyu", price:"1.400–3.500 THB", from:"Ao Po iskelesi ya da Royal Phuket Marina", d:"Kireçtaşı kayalar, mağaralarda kano, suyun üstündeki Panyee köyü. Deniz sakin, çocuklu ve deniz tutanlar için en rahat tur."},
+    {t:"Similan Adaları", price:"2.500–4.500 THB", from:"Khao Lak'taki Tab Lamu iskelesi (otelden araçla 1,5–2 saat)", d:"Tayland'ın en berrak suyu, şnorkel ve dalış. Sadece sezonda açık, yaklaşık kasım–nisan."},
+    {t:"Racha ve Coral adaları", price:"Tur sitelerinden bak", from:"Chalong iskelesi", d:"Yakın adalar, yarım gün ya da tam gün. Phi Phi'ye göre kısa tekne yolu."}
+  ],
+  tourNotes:["Turların çoğu otelden alır: 06:00–08:00 arası minibüs gelir, iskeleye götürür, akşam geri bırakır.","Fiyata öğle yemeği genelde dahil. Milli park ücreti (kişi başı 100–400 THB) bazen ayrıca istenir, rezervasyonda sor.","'VIP' etiketi çoğu zaman aynı tekne demek; fiyat farkına değil tekne tipine ve grup büyüklüğüne bak.","Yoğun sezonda Phi Phi ve Similan turları 3–5 gün önceden dolar."],
+  flights:[
+    {to:"Bangkok Suvarnabhumi (BKK)", who:"Thai AirAsia, Bangkok Airways, Thai Airways, Thai Vietjet", note:"Günde yaklaşık 25 uçuş"},
+    {to:"Bangkok Don Mueang (DMK)", who:"Thai AirAsia, Nok Air, Thai Lion Air", note:"Düşük maliyetli firmaların ana üssü"},
+    {to:"Chiang Mai", who:"Thai AirAsia, Thai Vietjet", note:"Günde yaklaşık 5 direkt uçuş, 2 saat"},
+    {to:"Koh Samui", who:"Bangkok Airways", note:"Tek firma uçar, günde 8 uçuş, pahalı hat"},
+    {to:"Hat Yai", who:"Bangkok Airways", note:"Günde 1 uçuş"},
+    {to:"Chiang Rai, Khon Kaen, Udon Thani", who:"Thai Vietjet, Thai AirAsia", note:"Haftada birkaç gün"}
+  ],
+  flightVerdict:"Bangkok'a en ucuz biletler genelde AirAsia, Nok Air ve Thai Lion Air'de; erken alınırsa tek yön 600–1.800 THB bandında. Bu firmalarda bavul ayrı ücretli, toplam fiyata öyle bak. Bangkok'ta hangi havalimanına ineceğine dikkat et, ikisi şehrin ayrı uçlarında.",
+  stay:[
+    {t:"Patong", who:"Gece hayatı, alışveriş, ilk kez gelenler", d:"En hareketli ve en kalabalık bölge."},
+    {t:"Kata", who:"Aileler, dengeli tatil", d:"Güzel plaj, yeterince restoran, Patong'dan sakin."},
+    {t:"Karon", who:"Sakinlik, uzun plaj", d:"Gecelik 1.000–3.000 THB bandında çok seçenek."},
+    {t:"Kamala / Surin", who:"Sessiz ve biraz üst segment", d:"Butik oteller, berrak su."},
+    {t:"Bang Tao / Laguna", who:"Lüks tatil köyleri", d:"Büyük resort'lar, golf, uzun plaj."},
+    {t:"Phuket Old Town", who:"Kültür, yemek, düşük bütçe", d:"Adanın en ucuz konaklaması; plaj yok, denize araçla gidilir."},
+    {t:"Rawai / Nai Harn", who:"Uzun kalanlar, yerel hava", d:"Güney ucu, sakin, motosikletle gezenlere uygun."}
+  ],
+  stayPrices:[["Hostel yatağı","400–600 THB"],["Old Town pansiyon","Yaklaşık 19–25 dolar"],["İyi orta sınıf otel","Yaklaşık 50–70 dolar"],["Havuzlu lüks villa","8.000 THB ve üstü"]],
+  stayVerdict:"Aynı otelin fiyatı siteden siteye değişir. Google Oteller bütün siteleri yan yana gösterir, oradan başla; Asya'da Agoda çoğu zaman en ucuzunu verir. Yüksek sezonda (kasım–mart) fiyatlar düşük sezonun 2–3 katına çıkar.",
+  needs:[
+    {t:"SIM kart", q:"AIS shop OR True shop", osm:'node["shop"="mobile_phone"]', d:"Havalimanı geliş salonunda AIS ve True tezgâhları var; sınırsız internetli turist hattı 299–599 THB. Pasaport gerekir. Şehirdeki 7-Eleven'larda da satılır."},
+    {t:"Market", q:"supermarket", osm:'nwr["shop"~"supermarket|convenience"]', d:"7-Eleven her köşede ve 24 saat açık. Büyük alışveriş için Big C, Lotus's ve Makro; ithal ürün için Villa Market."},
+    {t:"Eczane", q:"pharmacy", osm:'nwr["amenity"="pharmacy"]', d:"Boots ve Watsons zincirleri turistik bölgelerde yaygın, çalışanlar İngilizce konuşur. Sürekli kullandığın ilacı yanında getir."},
+    {t:"Helal yemek", q:"halal restaurant", osm:'nwr["amenity"~"restaurant|fast_food"]["diet:halal"="yes"]', d:"Phuket'te büyük bir Müslüman nüfus var; helal restoran bulmak kolay, özellikle Kamala, Bang Tao ve Phuket Town'da."},
+    {t:"ATM", q:"ATM", osm:'node["amenity"="atm"]', d:"Her yerde var. Yabancı kartla her çekimde sabit ücret kesilir."},
+    {t:"Hastane", q:"hospital", osm:'nwr["amenity"="hospital"]', d:"Acil ambulans 1669, turist polisi 1155. Özel hastaneler seyahat sigortasıyla çalışır."}
+  ],
+  sources:[
+    ["Phuket 101: havalimanı transferi","https://www.phuket101.net/phuket-airport-transfer/"],
+    ["Visit Thailand Today: havalimanından Patong'a","https://www.visitthailandtoday.com/guides/phuket-airport-to-patong"],
+    ["Now Phuket: Grab, Bolt, inDrive","https://nowphuket.com/?p=24055"],
+    ["Aster of Asia: taksi fiyatları","https://asterofasia.com/blog/phuket-taxi-grab-bolt-tuktuk-prices"],
+    ["Phuket 101: döviz","https://phuket101.net/phuket-exchange-rates"],
+    ["Thailand Starter Kit: döviz","https://www.thailandstarterkit.com/exclusive-content/best-places-to-exchange-money-in-thailand/"],
+    ["Travel Guides Tip: günlük turlar","https://travelguidestip.com/best-day-trips-phuket/"],
+    ["Aviability: Phuket uçuş noktaları","https://aviability.com/en/airport/hkt-phuket/destinations"],
+    ["Phuket Expat Guide: ucuz uçuşlar","https://phuketexpatguide.pages.dev/blog/cheap-flights-from-phuket/"],
+    ["Nomado: nerede kalınır","https://www.nomadotravel.app/en/guides/where-to-stay-in-phuket"]
+  ]
+};
+const CUISINES=[
+  {f:"🇹🇭",t:"Tay",q:"Thai restaurant",o:"thai"},{f:"🇹🇷",t:"Türk",q:"Turkish restaurant",o:"turkish|kebab"},
+  {f:"🇮🇹",t:"İtalyan",q:"Italian restaurant",o:"italian|pizza"},{f:"🇯🇵",t:"Japon",q:"Japanese restaurant",o:"japanese|sushi|ramen"},
+  {f:"🇮🇳",t:"Hint",q:"Indian restaurant",o:"indian"},{f:"🇨🇳",t:"Çin",q:"Chinese restaurant",o:"chinese"},
+  {f:"🇰🇷",t:"Kore",q:"Korean restaurant",o:"korean"},{f:"🇲🇽",t:"Meksika",q:"Mexican restaurant",o:"mexican"},
+  {f:"🇫🇷",t:"Fransız",q:"French restaurant",o:"french"},{f:"🇷🇺",t:"Rus",q:"Russian restaurant",o:"russian"},
+  {f:"🇱🇧",t:"Orta Doğu",q:"Middle Eastern restaurant",o:"lebanese|arab|middle_eastern"},{f:"🇺🇸",t:"Burger",q:"burger restaurant",o:"burger|american"}
+];
+const DIETS=[{t:"Helal",q:"halal",o:'["diet:halal"="yes"]'},{t:"Vejetaryen",q:"vegetarian",o:'["diet:vegetarian"~"yes|only"]'},{t:"Deniz ürünü",q:"seafood",o:'["cuisine"~"seafood"]'}];
+
+/* ---------- yardımcılar ---------- */
+const C=PHUKET;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const enc=encodeURIComponent;
+const gSearch=(q,near)=>"https://www.google.com/maps/search/?api=1&query="+enc(q+(near?" "+near:" near me"));
+const gPlace=q=>"https://www.google.com/maps/search/?api=1&query="+enc(q+" "+C.name);
+const gDir=(dest,mode)=>"https://www.google.com/maps/dir/?api=1&origin="+enc(C.airport.q)+"&destination="+enc(dest)+"&travelmode="+mode;
+const link=(href,label,alt)=>`<a class="btn${alt?" alt":""}" href="${esc(href)}" target="_blank" rel="noopener">${esc(label)}</a>`;
+const store={get(k){try{return localStorage.getItem("inis."+k)}catch(e){return null}},set(k,v){try{localStorage.setItem("inis."+k,v)}catch(e){}}};
+const SECTIONS=[["cikis","Çıkış"],["otel-yolu","Otele git"],["uygulamalar","Uygulamalar"],["doviz","Döviz"],["gezi","Gezilecek"],["turlar","Turlar"],["ucuslar","İç hat"],["konaklama","Oteller"],["yemek","Yemek"],["lazim","Lazım olanlar"],["harita","Harita"]];
+const plate=(i,title)=>`<div class="plate"><div class="no">${String(i).padStart(2,"0")}</div><h2>${esc(title)}</h2></div>`;
+
+/* ---------- oteline göre öneri (saf mantık) ---------- */
+function advise(zoneId,people,late){
+  const z=C.zones.find(x=>x.id===zoneId)||C.zones[C.zones.length-1];
+  const fixed=z.fixed?` (${z.fixed.toLocaleString("tr-TR")} THB, 3 kişilik araç)`:"";
+  const car=`Salondaki sabit fiyatlı taksi tezgâhı${fixed} ya da Grab`;
+  if(z.id==="near") return {pick:"Taksi ya da Grab", why:"Otelin havalimanına birkaç kilometre. Otobüs bu yöne uğramıyor, kısa bir araç yolculuğu yeter. Oteline ücretsiz servisi olup olmadığını da sor."};
+  if(z.bus==="none") return {pick:car, why:"Bu bölgeye doğrudan otobüs yok. Tezgâhtaki fiyat tablosuna bak, Grab'deki fiyatla karşılaştır, ucuz olanı al."};
+  if(late) return {pick:car, why:z.bus==="smart"?"Smart Bus'ın son seferi 23:30. Gece inişinde tezgâh en zahmetsizi; sürücü aramakla uğraşmazsın.":"Phuket Town otobüsü yaklaşık 20:30'da biter. Gece için tezgâh ya da Grab."};
+  if(people>=3) return {pick:car, why:`${people} kişi için otobüs ${people*100} THB tutar ama otelin kapısına bırakmaz ve uzun sürer. Araç kapıdan kapıya götürür${z.fixed?"; kişi başı yaklaşık "+Math.round(z.fixed/Math.min(people,3))+" THB'ye gelir":""}. ${people>3?"4 kişi ve üstü için SUV ya da minibüs iste.":""}`};
+  if(z.bus==="town") return {pick:"Havalimanı otobüsü (100 THB)", why:"Old Town'daki 1 numaralı terminale gider, yaklaşık 1 saat 30 dakika. Terminalden otele yürü ya da kısa bir Grab çağır. Acelen varsa araç tut."};
+  return {pick:"Phuket Smart Bus (100 THB)", why:`${z.n} güzergâh üzerinde. Otele en yakın durakta in, kalanını yürü ya da kısa bir Grab çağır. Yol 1,5–2 saat sürebilir; acelen ya da ağır bavulun varsa ${car.toLowerCase()} daha rahat.`};
+}
+
+/* ---------- çizim ---------- */
+function render(){
+  document.documentElement.lang="tr";
+  $("cities").innerHTML=`<span class="city on">${esc(C.name)}</span><span class="city">Bangkok · yakında</span>`;
+  $("h1").textContent=C.headline; $("lede").textContent=C.lede;
+  $("facts").innerHTML=[["Havalimanı",C.airport.code],...C.facts,["Son kontrol",C.checked]].map(f=>`<li><b>${esc(f[0])}</b>${esc(f[1])}</li>`).join("");
+  $("nav").innerHTML=SECTIONS.map(s=>`<a href="#${s[0]}">${esc(s[1])}</a>`).join("");
+  let h="";
+  // 1 çıkış
+  h+=`<section id="cikis">${plate(1,"Havalimanından çıkış")}<p class="intro">Phuket'te metro ve tren yok. Havalimanından otobüs, taksi ya da uygulamayla çıkılır. Fiyatlar araç başıdır, otobüs ve minibüs hariç.</p><div class="stack">`
+    +C.exits.map(e=>`<div class="card"><h3>${esc(e.t)}</h3><div class="meta"><span class="tag where">${esc(e.where)}</span><span class="tag price">${esc(e.price)}</span><span class="tag">${esc(e.time)}</span>${e.pick?'<span class="tag pick">Zahmetsiz</span>':""}</div><p>${esc(e.d)}</p></div>`).join("")
+    +`<div class="verdict"><b class="h">Hangisi mantıklı</b>${esc(C.exitVerdict)}</div></div></section>`;
+  // 2 otele git
+  h+=`<section id="otel-yolu">${plate(2,"Oteline nasıl gidersin")}<p class="intro">Otelini yaz, bölgesini seç. Sana uygun yolu söyleyelim, tarifi de haritada açalım.</p>
+  <div class="card"><form class="go" id="goform">
+    <div><label for="hotel">Otelinin adı</label><input type="text" id="hotel" placeholder="Örnek: Hotel Clover Patong" autocomplete="off"></div>
+    <div class="two"><div><label for="zone">Bölge</label><select id="zone">${C.zones.map(z=>`<option value="${z.id}">${esc(z.n)}</option>`).join("")}</select></div>
+    <div><label for="people">Kaç kişisiniz</label><select id="people">${[1,2,3,4,5,6].map(n=>`<option value="${n}"${n===2?" selected":""}>${n}${n===6?" ve üstü":""}</option>`).join("")}</select></div></div>
+    <div><label for="late">İniş saati</label><select id="late"><option value="0">Gündüz ya da akşam</option><option value="1">Gece 23:00'ten sonra</option></select></div>
+  </form></div>
+  <div class="verdict" id="advice" style="margin-top:10px"></div><div class="btns" id="gobtns"></div>
+  <p class="note" style="margin-top:8px">Düğmeler Google Haritalar'ı açar; otelin oraya yazılmış gelir. Toplu taşıma tarifinde otele en yakın durağı ve yürüme mesafesini görürsün.</p></section>`;
+  // 3 uygulamalar
+  h+=`<section id="uygulamalar">${plate(3,"Ulaşım uygulamaları")}<p class="intro">Phuket'te şehir içinde bu uygulamalar kullanılıyor. Fiyatı binmeden gösterirler; ikisini de açıp karşılaştırmak en sağlamı.</p><div class="stack">`
+    +C.apps.map(a=>`<div class="card"><h3>${esc(a.t)}</h3>${a.pick?`<div class="meta"><span class="tag pick">${esc(a.pick)}</span></div>`:""}<p>${esc(a.d)}</p><div class="btns">${link(a.url,a.t+" uygulamasını indir",1)}</div></div>`).join("")
+    +`<div class="verdict caution"><b class="h">Bilmen gerekenler</b><ul class="plain">${C.appNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div></div></section>`;
+  // 4 döviz
+  h+=`<section id="doviz">${plate(4,"Döviz")}<div class="stack"><div class="verdict"><b class="h">En makulü</b>${esc(C.fx.verdict)}</div><div class="card" id="rate" hidden></div>`
+    +C.fx.places.map(p=>`<div class="card"><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p>${p.q?`<div class="btns">${link(gSearch(p.q,""),"Haritada göster",1)}</div>`:""}</div>`).join("")
+    +`<div class="card"><h3>İpuçları</h3><ul class="plain">${C.fx.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul><div class="btns">${link(gSearch("currency exchange"),"Bana en yakın döviz bürosu")}</div></div></div></section>`;
+  // 5 gezi
+  h+=`<section id="gezi">${plate(5,"Gezilecek yerler")}<div class="stack">`
+    +C.sights.map(s=>`<div class="card"><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="btns">${link(gPlace(s.t),"Haritada aç",1)}</div></div>`).join("")+`</div></section>`;
+  // 6 turlar
+  h+=`<section id="turlar">${plate(6,"Günlük turlar")}<p class="intro">Fiyatlar kişi başı, ortak tur için yaklaşık aralıktır. Aynı tur farklı sitelerde farklı fiyata satılır, almadan önce iki siteye bak.</p><div class="stack">`
+    +C.tours.map(t=>`<div class="card"><h3>${esc(t.t)}</h3><div class="meta"><span class="tag where">${esc(t.from)}</span><span class="tag price">${esc(t.price)}</span></div><p>${esc(t.d)}</p></div>`).join("")
+    +`<div class="verdict caution"><b class="h">Nasıl işliyor</b><ul class="plain">${C.tourNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>
+    <div class="btns">${link("https://www.getyourguide.com/s/?q="+enc(C.name),"GetYourGuide")}${link("https://www.klook.com/search/result/?query="+enc(C.name),"Klook")}${link("https://www.viator.com/searchResults/all?text="+enc(C.name),"Viator")}</div></div></section>`;
+  // 7 uçuşlar
+  h+=`<section id="ucuslar">${plate(7,"İç hat uçuşlar")}<div class="stack"><div class="tw"><table><thead><tr><th>Nereye</th><th>Kimler uçuyor</th><th>Not</th></tr></thead><tbody>`
+    +C.flights.map(f=>`<tr><td><b>${esc(f.to)}</b></td><td>${esc(f.who)}</td><td>${esc(f.note)}</td></tr>`).join("")
+    +`</tbody></table></div><div class="verdict"><b class="h">Hangisi mantıklı</b>${esc(C.flightVerdict)}</div>
+    <div class="btns">${link("https://www.google.com/travel/flights?q="+enc("Flights from "+C.airport.code+" to Bangkok"),"Google Uçuşlar'da fiyat bak")}${link("https://www.skyscanner.com.tr/transport/flights/"+C.airport.code.toLowerCase()+"/bkkt/","Skyscanner",1)}</div></div></section>`;
+  // 8 konaklama
+  h+=`<section id="konaklama">${plate(8,"Oteller")}<div class="stack"><div class="verdict"><b class="h">Nereden bakmalı</b>${esc(C.stayVerdict)}</div>
+    <div class="btns">${link("https://www.google.com/travel/hotels/"+enc(C.name),"Google Oteller: siteleri karşılaştır")}${link("https://www.agoda.com/search?textToSearch="+enc(C.name),"Agoda",1)}${link("https://www.booking.com/searchresults.html?ss="+enc(C.name),"Booking",1)}${link("https://www.trip.com/hotels/?keyword="+enc(C.name),"Trip.com",1)}</div>
+    <div class="tw"><table><thead><tr><th>Fiyatlar nereden başlıyor</th><th>Gecelik</th></tr></thead><tbody>${C.stayPrices.map(p=>`<tr><td>${esc(p[0])}</td><td class="n">${esc(p[1])}</td></tr>`).join("")}</tbody></table></div>`
+    +C.stay.map(s=>`<div class="card"><h3>${esc(s.t)}</h3><div class="meta"><span class="tag">${esc(s.who)}</span></div><p>${esc(s.d)}</p></div>`).join("")+`</div></section>`;
+  // 9 yemek
+  h+=`<section id="yemek">${plate(9,"Yemek")}<p class="intro">Bayrağa bas, o mutfağın sana en yakın restoranlarını Google puanlarıyla aç.</p>
+    <div class="flags" id="flags" role="group" aria-label="Mutfak seç">${CUISINES.map((c,i)=>`<button type="button" class="flag" data-i="${i}" aria-pressed="false"><span class="f">${c.f}</span><span class="t">${esc(c.t)}</span></button>`).join("")}</div>
+    <div class="chips" id="diets" role="group" aria-label="Beslenme tercihi">${DIETS.map((d,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="false">${esc(d.t)}</button>`).join("")}</div>
+    <div class="btns" id="foodbtns"></div></section>`;
+  // 10 lazım
+  h+=`<section id="lazim">${plate(10,"Lazım olanlar")}<div class="stack">`
+    +C.needs.map((n,i)=>`<div class="card"><h3>${esc(n.t)}</h3><p>${esc(n.d)}</p><div class="btns">${link(gSearch(n.q),"En yakını bul")}<button type="button" class="btn alt onmap" data-need="${i}">Haritada göster</button></div></div>`).join("")+`</div></section>`;
+  // 11 harita
+  h+=`<section id="harita">${plate(11,"Harita")}<div id="mapwrap"><div id="map" aria-label="${esc(C.name)} haritası"></div>
+    <div class="legend"><span><i class="dot" style="background:#111418"></i>Havalimanı</span><span><i class="dot" style="background:#c9a400"></i>Gezilecek yer</span><span><i class="dot" style="background:#1c7a4c"></i>Bölgeler</span><span><i class="dot" style="background:#c0392b"></i>Arama sonucu</span><span><i class="dot" style="background:#1a73e8"></i>Sen</span></div>
+    <div class="btns"><button type="button" class="btn alt" id="locate">Konumumu göster</button></div><p class="note" id="mapmsg" role="status"></p></div>
+    <div class="verdict caution" id="mapnote"><b class="h">Harita bu önizlemede kapalı</b>Bu sayfa şu an Claude'un içinde açık ve burası dışarıdan harita yüklenmesine izin vermiyor. Sayfa kendi adresine taşındığında harita, konumun ve yakındaki yerler burada görünecek. O zamana kadar yukarıdaki düğmeler Google Haritalar'da açılır.</div></section>`;
+  $("main").innerHTML=h;
+  $("foot").innerHTML=`<p><b>Son kontrol: ${esc(C.checked)}.</b> Fiyatlar ve biniş noktaları değişir; buradaki rakamlar yaklaşık aralıktır, tabelada ve uygulamada gördüğün geçerlidir.</p><p>Kaynaklar: ${C.sources.map(s=>`<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ")}</p><p>Harita verisi © OpenStreetMap katkıcıları.</p>`;
+}
+
+/* ---------- otel formu ---------- */
+function updateGo(){
+  const hotel=$("hotel").value.trim(), zone=$("zone").value, people=+$("people").value, late=$("late").value==="1";
+  const a=advise(zone,people,late);
+  $("advice").innerHTML=`<b class="h">Sana önerimiz: ${esc(a.pick)}</b>${esc(a.why)}`;
+  const z=C.zones.find(x=>x.id===zone);
+  const dest=hotel?hotel+", "+C.name:(z&&z.id!=="other"?z.n.split(" /")[0]+", "+C.name:C.name);
+  $("gobtns").innerHTML=link(gDir(dest,"transit"),"Toplu taşıma tarifi")+link(gDir(dest,"driving"),"Araba rotası ve mesafe",1);
+  store.set("hotel",hotel); store.set("zone",zone);
+}
+
+/* ---------- yemek ---------- */
+let cui=1, diet=-1;
+function updateFood(){
+  document.querySelectorAll("#flags .flag").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.i===cui)));
+  document.querySelectorAll("#diets .chip").forEach(b=>b.setAttribute("aria-pressed",String(+b.dataset.i===diet)));
+  const c=CUISINES[cui], d=diet>=0?DIETS[diet]:null;
+  const q=(d?d.q+" ":"")+c.q, label=(d?d.t.toLowerCase()+" ":"")+c.t;
+  $("foodbtns").innerHTML=link(gSearch(q),"Bana en yakın "+label+" restoranları")+link(gSearch(q,C.name),C.name+" genelinde ara",1)+`<button type="button" class="btn alt" id="foodmap">Haritada göster</button>`;
+  $("foodmap").addEventListener("click",()=>{ const sel='nwr["amenity"~"restaurant|fast_food|cafe"]["cuisine"~"'+c.o+'",i]'+(d&&d.o.indexOf("cuisine")<0?d.o:""); overpass(sel,label+" restoranları"); });
+  store.set("cui",String(cui));
+}
+
+/* ---------- harita ---------- */
+let map=null, results=null, me=null, mapOK=false;
+function mapFail(){ $("mapwrap").style.display="none"; $("mapnote").style.display="block"; mapOK=false; }
+function initMap(){
+  if(typeof L==="undefined") return mapFail();
+  try{
+    map=L.map("map",{scrollWheelZoom:false}).setView(C.center,C.zoom);
+    let loaded=0;
+    const tiles=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'});
+    tiles.on("tileload",()=>{loaded++; mapOK=true;});
+    tiles.addTo(map);
+    setTimeout(()=>{ if(!loaded) mapFail(); },6000);
+    const pin=(ll,color,html,r)=>L.circleMarker(ll,{radius:r||7,color:"#fff",weight:2,fillColor:color,fillOpacity:1}).addTo(map).bindPopup(html);
+    pin(C.airport.ll,"#111418","<b>"+esc(C.airport.name)+"</b>",9);
+    C.sights.forEach(s=>pin(s.ll,"#c9a400","<b>"+esc(s.t)+"</b><br>"+esc(s.d)+'<br><a href="'+esc(gPlace(s.t))+'" target="_blank" rel="noopener">Google Haritalar\'da aç</a>'));
+    C.zones.filter(z=>z.ll).forEach(z=>pin(z.ll,"#1c7a4c","<b>"+esc(z.n)+"</b>",6));
+    results=L.layerGroup().addTo(map);
+  }catch(e){ mapFail(); }
+}
+async function overpass(selector,label){
+  location.hash="harita";
+  if(!map||!mapOK){ return; }
+  const msg=$("mapmsg"); msg.textContent=label+" aranıyor…";
+  const q="[out:json][timeout:20];"+selector+"("+C.bbox.join(",")+");out center 80;";
+  try{
+    const r=await fetch("https://overpass-api.de/api/interpreter",{method:"POST",body:"data="+enc(q),headers:{"Content-Type":"application/x-www-form-urlencoded"}});
+    if(!r.ok) throw new Error(r.status);
+    const j=await r.json(); results.clearLayers();
+    const pts=[];
+    (j.elements||[]).forEach(e=>{
+      const lat=e.lat||(e.center&&e.center.lat), lon=e.lon||(e.center&&e.center.lon); if(!lat) return;
+      const name=(e.tags&&(e.tags["name:en"]||e.tags.name))||label;
+      L.circleMarker([lat,lon],{radius:7,color:"#fff",weight:2,fillColor:"#c0392b",fillOpacity:1}).addTo(results)
+        .bindPopup("<b>"+esc(name)+'</b><br><a href="https://www.google.com/maps/search/?api=1&query='+enc(name+" "+C.name)+'" target="_blank" rel="noopener">Google\'da puanını gör</a>');
+      pts.push([lat,lon]);
+    });
+    if(pts.length){ map.fitBounds(pts,{padding:[30,30],maxZoom:15}); msg.textContent=pts.length+" yer bulundu: "+label+". Noktaya dokun, Google puanına oradan geç."; }
+    else msg.textContent="Açık haritada kayıtlı "+label+" bulunamadı. Yukarıdaki Google düğmesini dene; Google'ın listesi daha geniştir.";
+  }catch(e){ msg.textContent="Arama şu an yapılamadı. Biraz sonra tekrar dene ya da Google düğmesini kullan."; }
+}
+function locate(){
+  const msg=$("mapmsg");
+  if(!navigator.geolocation||!map){ msg.textContent="Bu cihazda konum alınamıyor."; return; }
+  msg.textContent="Konumun alınıyor…";
+  navigator.geolocation.getCurrentPosition(p=>{
+    const ll=[p.coords.latitude,p.coords.longitude];
+    if(me) map.removeLayer(me);
+    me=L.circleMarker(ll,{radius:9,color:"#fff",weight:3,fillColor:"#1a73e8",fillOpacity:1}).addTo(map).bindPopup("Buradasın");
+    map.setView(ll,14); msg.textContent="Konumun haritada mavi nokta olarak işaretlendi.";
+  },()=>{ msg.textContent="Konum izni verilmedi. Tarayıcı ayarlarından izin verip tekrar dene."; },{enableHighAccuracy:true,timeout:10000});
+}
+
+/* ---------- canlı kur (ücretsiz servis; ulaşılamazsa kart görünmez) ---------- */
+async function loadRate(){
+  try{
+    const r=await fetch("https://api.frankfurter.app/latest?from=USD&to=THB,TRY,EUR");
+    if(!r.ok) return; const j=await r.json(); if(!j.rates||!j.rates.THB) return;
+    const thb=j.rates.THB, rows=[["1 dolar",thb],["1 avro",j.rates.EUR?thb/j.rates.EUR:null],["100 Türk lirası",j.rates.TRY?thb/j.rates.TRY*100:null]].filter(x=>x[1]);
+    const el=$("rate"); el.hidden=false;
+    el.innerHTML="<h3>Bugünkü piyasa kuru</h3><div class=\"meta\">"+rows.map(x=>`<span class="tag price">${esc(x[0])} = ${x[1].toFixed(2)} THB</span>`).join("")+`</div><p class="note">${esc(j.date)} tarihli orta kur. Döviz bürosu bundan biraz düşüğünü verir; tabeladaki rakam buna ne kadar yakınsa kur o kadar iyidir.</p>`;
+  }catch(e){}
+}
+
+/* ---------- başlat ---------- */
+render();
+const sh=store.get("hotel"), sz=store.get("zone"), sc=store.get("cui");
+if(sh) $("hotel").value=sh;
+if(sz&&C.zones.some(z=>z.id===sz)) $("zone").value=sz;
+if(sc!==null&&CUISINES[+sc]) cui=+sc;
+["hotel","zone","people","late"].forEach(id=>$(id).addEventListener("input",updateGo));
+$("goform").addEventListener("submit",e=>e.preventDefault());
+updateGo();
+$("flags").addEventListener("click",e=>{const b=e.target.closest(".flag"); if(!b) return; cui=+b.dataset.i; updateFood();});
+$("diets").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(!b) return; const i=+b.dataset.i; diet=(diet===i?-1:i); updateFood();});
+updateFood();
+document.querySelectorAll(".onmap").forEach(b=>b.addEventListener("click",()=>{const n=C.needs[+b.dataset.need]; overpass(n.osm,n.t);}));
+$("locate").addEventListener("click",locate);
+initMap();
+loadRate();
+</script>
+</body>
+</html>
