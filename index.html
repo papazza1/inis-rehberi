@@ -16,10 +16,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
 <style>
-/* Düzen fikri: havalimanı yön tabelası. Sarı levhalar bölüm başlığı, kat/kapı bilgisi siyah rozet, tek sütun telefon akışı. */
+/* Düzen fikri: ülkenin renkleriyle yön tabelası. Üstte bayrak şeridi, altında dokununca açılan numaralı sekmeler, tek sütun telefon akışı. */
 :root{
   --paper:#eceff1; --panel:#ffffff; --ink:#14181c; --muted:#56616b; --line:#cdd4d9;
-  --sign:#ffd200; --sign-ink:#111418; --good:#1c7a4c; --warn:#a8500f;
+  --sign:#e8b23a; --sign-ink:#221c4a; --good:#1c7a4c; --warn:#a8500f;
   --display:"Barlow Condensed","Arial Narrow",Arial,sans-serif;
   --body:"Barlow",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
 }
@@ -42,7 +42,9 @@ a{color:inherit}
 :focus-visible{outline:3px solid var(--sign);outline-offset:2px}
 .wrap{max-width:720px;margin:0 auto;padding:0 16px}
 
-.top{background:var(--sign-ink);color:#fff;padding:14px 0 16px}
+.top{background:var(--sign-ink);color:#fff;padding:14px 0 0}
+.top .wrap{padding-bottom:18px}
+[hidden]{display:none!important}
 .top .row{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .brand{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:.08em;text-transform:uppercase}
 .brand b{background:var(--sign);color:var(--sign-ink);padding:1px 7px;margin-right:6px}
@@ -151,6 +153,29 @@ footer a{word-break:break-word}
 .leaflet-popup-tip-container{width:40px;height:20px;position:absolute;left:50%;margin-left:-20px;overflow:hidden;pointer-events:none}
 .leaflet-popup-tip{width:15px;height:15px;margin:-8px auto 0;transform:rotate(45deg);background:#fff}
 a.leaflet-popup-close-button{position:absolute;top:0;right:0;width:24px;height:24px;font:18px/24px Arial;text-align:center;color:#555;text-decoration:none}
+.stripe{height:14px;background:linear-gradient(#a51931 0 16.66%,#f4f5f8 0 33.33%,#2d2a4a 0 66.66%,#f4f5f8 0 83.33%,#a51931 0)}
+.city{background:transparent;cursor:pointer}
+button.city:hover{background:var(--sign);color:var(--sign-ink);border-color:var(--sign)}
+.crumb{margin:18px 0 0;font-family:var(--display);font-size:18px;letter-spacing:.06em;text-transform:uppercase;color:var(--sign)}
+#where h1{margin-top:2px}
+#chooser label{color:#fff}
+#chooser select{border-color:var(--sign)}
+.btn.gold{background:var(--sign);color:var(--sign-ink);border-color:var(--sign);font-size:18px;padding:11px 14px}
+main{padding-top:14px}
+details.acc{background:var(--panel);border:1px solid var(--line);margin-top:8px}
+details.acc>summary{list-style:none;display:flex;align-items:stretch;cursor:pointer;min-height:54px}
+details.acc>summary::-webkit-details-marker{display:none}
+details.acc>summary .no{background:var(--sign-ink);color:var(--sign);font-family:var(--display);font-weight:700;font-size:22px;min-width:54px;display:flex;align-items:center;justify-content:center}
+details.acc>summary h2{flex:1;margin:0;display:flex;align-items:center;padding:8px 12px;font-family:var(--display);font-weight:700;font-size:22px;letter-spacing:.03em;text-transform:uppercase;line-height:1.15}
+details.acc>summary .chev{width:46px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-size:28px;color:var(--muted)}
+details.acc>summary .chev::after{content:"+"}
+details.acc[open]>summary .chev::after{content:"–"}
+details.acc[open]>summary{background:var(--sign-ink);color:#fff}
+details.acc[open]>summary .no{background:var(--sign);color:var(--sign-ink)}
+details.acc[open]>summary .chev{color:var(--sign)}
+details.acc>.body{padding:14px;border-top:4px solid var(--sign)}
+.body .card,.body .verdict,.body .tw{background:var(--paper)}
+.body input[type=text],.body select{background:var(--panel)}
 </style>
 </head>
 <body>
@@ -158,15 +183,28 @@ a.leaflet-popup-close-button{position:absolute;top:0;right:0;width:24px;height:2
   <div class="wrap">
     <div class="row">
       <div class="brand"><b>→</b>İniş Rehberi</div>
-      <div class="cities" id="cities"></div>
+      <button type="button" class="city" id="change" hidden>Yeri değiştir</button>
     </div>
-    <h1 id="h1"></h1>
-    <p class="lede" id="lede"></p>
-    <ul class="facts" id="facts"></ul>
+    <div id="chooser">
+      <h1>Nereye gidiyorsun?</h1>
+      <p class="lede">Ülkeyi, şehri ve kalacağın bölgeyi seç. Rehber ona göre açılsın.</p>
+      <form id="destform" class="go">
+        <div><label for="d-country">Ülke</label><select id="d-country"></select></div>
+        <div><label for="d-city">Şehir</label><select id="d-city"></select></div>
+        <div><label for="d-zone">Kalacağın bölge</label><select id="d-zone"></select></div>
+        <button type="submit" class="btn gold">Rehberi aç</button>
+      </form>
+    </div>
+    <div id="where" hidden>
+      <p class="crumb" id="crumb"></p>
+      <h1 id="h1"></h1>
+      <p class="lede" id="lede"></p>
+      <ul class="facts" id="facts"></ul>
+    </div>
   </div>
+  <div class="stripe" id="stripe"></div>
 </header>
-<nav aria-label="Bölümler"><div class="wrap" id="nav"></div></nav>
-<main class="wrap" id="main"></main>
+<main class="wrap" id="main" hidden></main>
 <footer><div class="wrap" id="foot"></div></footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
@@ -174,12 +212,12 @@ a.leaflet-popup-close-button{position:absolute;top:0;right:0;width:24px;height:2
 "use strict";
 /* ---------- ŞEHİR VERİSİ: yeni şehir eklemek = bu nesneden bir tane daha ---------- */
 const PHUKET = {
-  id:"phuket", name:"Phuket", country:"Tayland", checked:"13 Kasım 2026",
+  id:"phuket", name:"Phuket", country:"Tayland", flag:"🇹🇭", theme:{ink:"#221c4a",accent:"#e8b23a",stripe:"linear-gradient(#a51931 0 16.66%,#f4f5f8 0 33.33%,#2d2a4a 0 66.66%,#f4f5f8 0 83.33%,#a51931 0)"}, checked:"13 Kasım 2026",
   airport:{name:"Phuket Uluslararası Havalimanı", code:"HKT", q:"Phuket International Airport", ll:[8.1132,98.3169]},
   bbox:[7.74,98.25,8.20,98.45], center:[7.95,98.34], zoom:11,
   headline:"Phuket'e indin. Şimdi ne yapacaksın?",
   lede:"Havalimanından çıkıştan otele, dövizden turlara kadar ilk gün lazım olan her şey tek sayfada.",
-  facts:[["Para","Tayland bahtı (THB)"],["Patong","41 km, yaklaşık 50 dk"],["Raylı sistem","Yok"]],
+  facts:[["Para","Tayland bahtı (THB)"],["Raylı sistem","Yok"]],
   exits:[
     {t:"Phuket Smart Bus", where:"Çıkışta Smart Bus tabelası", price:"100 THB / kişi", time:"Patong 1,5–2 saat",
      d:"Batı sahili boyunca gider: Cherngtalay, Surin, Kamala, Patong, Karon, Kata, Rawai. Saat başı kalkar, son sefer 23:30. Nereye inersen in fiyat aynı."},
@@ -303,7 +341,7 @@ const gDir=(dest,mode)=>"https://www.google.com/maps/dir/?api=1&origin="+enc(C.a
 const link=(href,label,alt)=>`<a class="btn${alt?" alt":""}" href="${esc(href)}" target="_blank" rel="noopener">${esc(label)}</a>`;
 const store={get(k){try{return localStorage.getItem("inis."+k)}catch(e){return null}},set(k,v){try{localStorage.setItem("inis."+k,v)}catch(e){}}};
 const SECTIONS=[["cikis","Çıkış"],["otel-yolu","Otele git"],["uygulamalar","Uygulamalar"],["doviz","Döviz"],["gezi","Gezilecek"],["turlar","Turlar"],["ucuslar","İç hat"],["konaklama","Oteller"],["yemek","Yemek"],["lazim","Lazım olanlar"],["harita","Harita"]];
-const plate=(i,title)=>`<div class="plate"><div class="no">${String(i).padStart(2,"0")}</div><h2>${esc(title)}</h2></div>`;
+const plate=(i,title)=>`<summary><span class="no">${String(i).padStart(2,"0")}</span><h2>${esc(title)}</h2><span class="chev" aria-hidden="true"></span></summary>`;
 
 /* ---------- oteline göre öneri (saf mantık) ---------- */
 function advise(zoneId,people,late){
@@ -321,78 +359,73 @@ function advise(zoneId,people,late){
 /* ---------- çizim ---------- */
 function render(){
   document.documentElement.lang="tr";
-  $("cities").innerHTML=`<span class="city on">${esc(C.name)}</span><span class="city">Bangkok · yakında</span>`;
-  $("h1").textContent=C.headline; $("lede").textContent=C.lede;
-  $("facts").innerHTML=[["Havalimanı",C.airport.code],...C.facts,["Son kontrol",C.checked]].map(f=>`<li><b>${esc(f[0])}</b>${esc(f[1])}</li>`).join("");
-  $("nav").innerHTML=SECTIONS.map(s=>`<a href="#${s[0]}">${esc(s[1])}</a>`).join("");
   let h="";
   // 1 çıkış
-  h+=`<section id="cikis">${plate(1,"Havalimanından çıkış")}<p class="intro">Phuket'te metro ve tren yok. Havalimanından otobüs, taksi ya da uygulamayla çıkılır. Fiyatlar araç başıdır, otobüs ve minibüs hariç.</p><div class="stack">`
+  h+=`<details class="acc" id="cikis">${plate(1,"Havalimanından çıkış")}<div class="body"><p class="intro">Phuket'te metro ve tren yok. Havalimanından otobüs, taksi ya da uygulamayla çıkılır. Fiyatlar araç başıdır, otobüs ve minibüs hariç.</p><div class="verdict" id="exitme" style="margin-bottom:10px"></div><div class="stack">`
     +C.exits.map(e=>`<div class="card"><h3>${esc(e.t)}</h3><div class="meta"><span class="tag where">${esc(e.where)}</span><span class="tag price">${esc(e.price)}</span><span class="tag">${esc(e.time)}</span>${e.pick?'<span class="tag pick">Zahmetsiz</span>':""}</div><p>${esc(e.d)}</p></div>`).join("")
-    +`<div class="verdict"><b class="h">Hangisi mantıklı</b>${esc(C.exitVerdict)}</div></div></section>`;
+    +`<div class="verdict"><b class="h">Hangisi mantıklı</b>${esc(C.exitVerdict)}</div></div></div></details>`;
   // 2 otele git
-  h+=`<section id="otel-yolu">${plate(2,"Oteline nasıl gidersin")}<p class="intro">Otelini yaz, bölgesini seç. Sana uygun yolu söyleyelim, tarifi de haritada açalım.</p>
+  h+=`<details class="acc" id="otel-yolu">${plate(2,"Oteline nasıl gidersin")}<div class="body"><p class="intro">Otelini yaz. Seçtiğin bölgeye ve kaç kişi olduğunuza göre uygun yolu söyleyelim, rotayı da haritada çizelim.</p>
   <div class="card"><form class="go" id="goform">
     <div><label for="hotel">Otelinin adı</label><input type="text" id="hotel" placeholder="Örnek: Hotel Clover Patong" autocomplete="off"></div>
-    <div class="two"><div><label for="zone">Bölge</label><select id="zone">${C.zones.map(z=>`<option value="${z.id}">${esc(z.n)}</option>`).join("")}</select></div>
-    <div><label for="people">Kaç kişisiniz</label><select id="people">${[1,2,3,4,5,6].map(n=>`<option value="${n}"${n===2?" selected":""}>${n}${n===6?" ve üstü":""}</option>`).join("")}</select></div></div>
-    <div><label for="late">İniş saati</label><select id="late"><option value="0">Gündüz ya da akşam</option><option value="1">Gece 23:00'ten sonra</option></select></div>
+    <div class="two"><div><label for="people">Kaç kişisiniz</label><select id="people">${[1,2,3,4,5,6].map(n=>`<option value="${n}"${n===2?" selected":""}>${n}${n===6?" ve üstü":""}</option>`).join("")}</select></div>
+    <div><label for="late">İniş saati</label><select id="late"><option value="0">Gündüz ya da akşam</option><option value="1">Gece 23:00'ten sonra</option></select></div></div>
   </form></div>
   <div class="verdict" id="advice" style="margin-top:10px"></div><div class="btns" id="gobtns"></div>
-  <p class="note" style="margin-top:8px">İlk düğme rotayı bu sayfadaki haritada çizer, mesafeyi ve süreyi gösterir. Adım adım otobüs tarifi açık haritada olmadığı için ikinci düğme Google Haritalar'ı açar.</p></section>`;
+  <p class="note" style="margin-top:8px">İlk düğme rotayı bu sayfadaki haritada çizer, mesafeyi ve süreyi gösterir. Adım adım otobüs tarifi açık haritada olmadığı için ikinci düğme Google Haritalar'ı açar.</p></div></details>`;
   // 3 uygulamalar
-  h+=`<section id="uygulamalar">${plate(3,"Ulaşım uygulamaları")}<p class="intro">Phuket'te şehir içinde bu uygulamalar kullanılıyor. Fiyatı binmeden gösterirler; ikisini de açıp karşılaştırmak en sağlamı.</p><div class="stack">`
+  h+=`<details class="acc" id="uygulamalar">${plate(3,"Ulaşım uygulamaları")}<div class="body"><p class="intro">Phuket'te şehir içinde bu uygulamalar kullanılıyor. Fiyatı binmeden gösterirler; ikisini de açıp karşılaştırmak en sağlamı.</p><div class="stack">`
     +C.apps.map(a=>`<div class="card"><h3>${esc(a.t)}</h3>${a.pick?`<div class="meta"><span class="tag pick">${esc(a.pick)}</span></div>`:""}<p>${esc(a.d)}</p><div class="btns">${link(a.url,a.t+" uygulamasını indir",1)}</div></div>`).join("")
-    +`<div class="verdict caution"><b class="h">Bilmen gerekenler</b><ul class="plain">${C.appNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div></div></section>`;
+    +`<div class="verdict caution"><b class="h">Bilmen gerekenler</b><ul class="plain">${C.appNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div></div></div></details>`;
   // 4 döviz
-  h+=`<section id="doviz">${plate(4,"Döviz")}<div class="stack"><div class="verdict"><b class="h">En makulü</b>${esc(C.fx.verdict)}</div><div class="card" id="rate" hidden></div>`
+  h+=`<details class="acc" id="doviz">${plate(4,"Döviz")}<div class="body"><div class="stack"><div class="verdict"><b class="h">En makulü</b>${esc(C.fx.verdict)}</div><div class="card" id="rate" hidden></div>`
     +C.fx.places.map(p=>`<div class="card"><h3>${esc(p.t)}</h3><p>${esc(p.d)}</p></div>`).join("")
-    +`<div class="card"><h3>İpuçları</h3><ul class="plain">${C.fx.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul><div class="btns"><button type="button" class="btn" data-act="fx">Döviz bürolarını haritada göster</button>${link(gSearch("currency exchange"),"Google'da puanlarına bak",1)}</div></div></div></section>`;
+    +`<div class="card"><h3>İpuçları</h3><ul class="plain">${C.fx.tips.map(t=>`<li>${esc(t)}</li>`).join("")}</ul><div class="btns"><button type="button" class="btn" data-act="fx">Döviz bürolarını haritada göster</button>${link(gSearch("currency exchange"),"Google'da puanlarına bak",1)}</div></div></div></div></details>`;
   // 5 gezi
-  h+=`<section id="gezi">${plate(5,"Gezilecek yerler")}<div class="stack">`
-    +C.sights.map((s,i)=>`<div class="card"><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="btns"><button type="button" class="btn" data-act="sight" data-i="${i}">Haritada göster</button></div></div>`).join("")+`</div></section>`;
+  h+=`<details class="acc" id="gezi">${plate(5,"Gezilecek yerler")}<div class="body"><div class="stack">`
+    +C.sights.map((s,i)=>`<div class="card"><h3>${esc(s.t)}</h3><p>${esc(s.d)}</p><div class="btns"><button type="button" class="btn" data-act="sight" data-i="${i}">Haritada göster</button></div></div>`).join("")+`</div></div></details>`;
   // 6 turlar
-  h+=`<section id="turlar">${plate(6,"Günlük turlar")}<p class="intro">Fiyatlar kişi başı, ortak tur için yaklaşık aralıktır. Aynı tur farklı sitelerde farklı fiyata satılır, almadan önce iki siteye bak.</p><div class="stack">`
+  h+=`<details class="acc" id="turlar">${plate(6,"Günlük turlar")}<div class="body"><p class="intro">Fiyatlar kişi başı, ortak tur için yaklaşık aralıktır. Aynı tur farklı sitelerde farklı fiyata satılır, almadan önce iki siteye bak.</p><div class="stack">`
     +C.tours.map(t=>`<div class="card"><h3>${esc(t.t)}</h3><div class="meta"><span class="tag where">${esc(t.from)}</span><span class="tag price">${esc(t.price)}</span></div><p>${esc(t.d)}</p></div>`).join("")
     +`<div class="verdict caution"><b class="h">Nasıl işliyor</b><ul class="plain">${C.tourNotes.map(n=>`<li>${esc(n)}</li>`).join("")}</ul></div>
-    <div class="btns">${link("https://www.getyourguide.com/s/?q="+enc(C.name),"GetYourGuide")}${link("https://www.klook.com/search/result/?query="+enc(C.name),"Klook")}${link("https://www.viator.com/searchResults/all?text="+enc(C.name),"Viator")}</div></div></section>`;
+    <div class="btns">${link("https://www.getyourguide.com/s/?q="+enc(C.name),"GetYourGuide")}${link("https://www.klook.com/search/result/?query="+enc(C.name),"Klook")}${link("https://www.viator.com/searchResults/all?text="+enc(C.name),"Viator")}</div></div></div></details>`;
   // 7 uçuşlar
-  h+=`<section id="ucuslar">${plate(7,"İç hat uçuşlar")}<div class="stack"><div class="tw"><table><thead><tr><th>Nereye</th><th>Kimler uçuyor</th><th>Not</th></tr></thead><tbody>`
+  h+=`<details class="acc" id="ucuslar">${plate(7,"İç hat uçuşlar")}<div class="body"><div class="stack"><div class="tw"><table><thead><tr><th>Nereye</th><th>Kimler uçuyor</th><th>Not</th></tr></thead><tbody>`
     +C.flights.map(f=>`<tr><td><b>${esc(f.to)}</b></td><td>${esc(f.who)}</td><td>${esc(f.note)}</td></tr>`).join("")
     +`</tbody></table></div><div class="verdict"><b class="h">Hangisi mantıklı</b>${esc(C.flightVerdict)}</div>
-    <div class="btns">${link("https://www.google.com/travel/flights?q="+enc("Flights from "+C.airport.code+" to Bangkok"),"Google Uçuşlar'da fiyat bak")}${link("https://www.skyscanner.com.tr/transport/flights/"+C.airport.code.toLowerCase()+"/bkkt/","Skyscanner",1)}</div></div></section>`;
+    <div class="btns">${link("https://www.google.com/travel/flights?q="+enc("Flights from "+C.airport.code+" to Bangkok"),"Google Uçuşlar'da fiyat bak")}${link("https://www.skyscanner.com.tr/transport/flights/"+C.airport.code.toLowerCase()+"/bkkt/","Skyscanner",1)}</div></div></div></details>`;
   // 8 konaklama
-  h+=`<section id="konaklama">${plate(8,"Oteller")}<div class="stack"><div class="verdict"><b class="h">Nereden bakmalı</b>${esc(C.stayVerdict)}</div>
+  h+=`<details class="acc" id="konaklama">${plate(8,"Oteller")}<div class="body"><div class="stack"><div class="verdict"><b class="h">Nereden bakmalı</b>${esc(C.stayVerdict)}</div>
     <div class="btns">${link("https://www.google.com/travel/hotels/"+enc(C.name),"Google Oteller: siteleri karşılaştır")}${link("https://www.agoda.com/search?textToSearch="+enc(C.name),"Agoda",1)}${link("https://www.booking.com/searchresults.html?ss="+enc(C.name),"Booking",1)}${link("https://www.trip.com/hotels/?keyword="+enc(C.name),"Trip.com",1)}</div>
     <div class="tw"><table><thead><tr><th>Fiyatlar nereden başlıyor</th><th>Gecelik</th></tr></thead><tbody>${C.stayPrices.map(p=>`<tr><td>${esc(p[0])}</td><td class="n">${esc(p[1])}</td></tr>`).join("")}</tbody></table></div>`
-    +C.stay.map(s=>`<div class="card"><h3>${esc(s.t)}</h3><div class="meta"><span class="tag">${esc(s.who)}</span></div><p>${esc(s.d)}</p></div>`).join("")+`</div></section>`;
+    +C.stay.map(s=>`<div class="card"><h3>${esc(s.t)}</h3><div class="meta"><span class="tag">${esc(s.who)}</span></div><p>${esc(s.d)}</p></div>`).join("")+`</div></div></details>`;
   // 9 yemek
-  h+=`<section id="yemek">${plate(9,"Yemek")}<p class="intro">Bayrağa bas, o mutfağın restoranlarını bu sayfadaki haritada gör. Puanlar için yanındaki Google düğmesini kullan.</p>
+  h+=`<details class="acc" id="yemek">${plate(9,"Yemek")}<div class="body"><p class="intro">Bayrağa bas, o mutfağın restoranlarını bu sayfadaki haritada gör. Puanlar için yanındaki Google düğmesini kullan.</p>
     <div class="flags" id="flags" role="group" aria-label="Mutfak seç">${CUISINES.map((c,i)=>`<button type="button" class="flag" data-i="${i}" aria-pressed="false"><span class="f">${c.f}</span><span class="t">${esc(c.t)}</span></button>`).join("")}</div>
     <div class="chips" id="diets" role="group" aria-label="Beslenme tercihi">${DIETS.map((d,i)=>`<button type="button" class="chip" data-i="${i}" aria-pressed="false">${esc(d.t)}</button>`).join("")}</div>
-    <div class="btns" id="foodbtns"></div></section>`;
+    <div class="btns" id="foodbtns"></div></div></details>`;
   // 10 lazım
-  h+=`<section id="lazim">${plate(10,"Lazım olanlar")}<div class="stack">`
-    +C.needs.map((n,i)=>`<div class="card"><h3>${esc(n.t)}</h3><p>${esc(n.d)}</p><div class="btns"><button type="button" class="btn onmap" data-need="${i}">Haritada göster</button>${link(gSearch(n.q),"Google'da puanlarına bak",1)}</div></div>`).join("")+`</div></section>`;
+  h+=`<details class="acc" id="lazim">${plate(10,"Lazım olanlar")}<div class="body"><div class="stack">`
+    +C.needs.map((n,i)=>`<div class="card"><h3>${esc(n.t)}</h3><p>${esc(n.d)}</p><div class="btns"><button type="button" class="btn onmap" data-need="${i}">Haritada göster</button>${link(gSearch(n.q),"Google'da puanlarına bak",1)}</div></div>`).join("")+`</div></div></details>`;
   // 11 harita
-  h+=`<section id="harita">${plate(11,"Harita")}<div id="mapwrap"><div id="map" aria-label="${esc(C.name)} haritası"></div>
+  h+=`<details class="acc" id="harita">${plate(11,"Harita")}<div class="body"><div id="mapwrap"><div id="map" aria-label="${esc(C.name)} haritası"></div>
     <div class="legend"><span><i class="dot" style="background:#111418"></i>Havalimanı</span><span><i class="dot" style="background:#c9a400"></i>Gezilecek yer</span><span><i class="dot" style="background:#1c7a4c"></i>Bölgeler</span><span><i class="dot" style="background:#c0392b"></i>Arama sonucu</span><span><i class="dot" style="background:#1a73e8"></i>Sen</span></div>
     <div class="btns"><button type="button" class="btn alt" id="locate">Konumumu göster</button></div><p class="note" id="mapmsg" role="status"></p><div class="stack" id="maplist"></div></div>
-    <div class="verdict caution" id="mapnote"><b class="h">Harita bu önizlemede kapalı</b>Bu sayfa şu an Claude'un içinde açık ve burası dışarıdan harita yüklenmesine izin vermiyor. Sayfa kendi adresine taşındığında harita, konumun ve yakındaki yerler burada görünecek. O zamana kadar yukarıdaki düğmeler Google Haritalar'da açılır.</div></section>`;
+    <div class="verdict caution" id="mapnote"><b class="h">Harita bu önizlemede kapalı</b>Bu sayfa şu an Claude'un içinde açık ve burası dışarıdan harita yüklenmesine izin vermiyor. Sayfa kendi adresine taşındığında harita, konumun ve yakındaki yerler burada görünecek. O zamana kadar yukarıdaki düğmeler Google Haritalar'da açılır.</div></div></details>`;
   $("main").innerHTML=h;
   $("foot").innerHTML=`<p><b>Son kontrol: ${esc(C.checked)}.</b> Fiyatlar ve biniş noktaları değişir; buradaki rakamlar yaklaşık aralıktır, tabelada ve uygulamada gördüğün geçerlidir.</p><p>Kaynaklar: ${C.sources.map(s=>`<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])}</a>`).join(" · ")}</p><p>Harita verisi © OpenStreetMap katkıcıları.</p>`;
 }
 
 /* ---------- otel formu ---------- */
 function updateGo(){
-  const hotel=$("hotel").value.trim(), zone=$("zone").value, people=+$("people").value, late=$("late").value==="1";
+  const hotel=$("hotel").value.trim(), zone=ZONE, people=+$("people").value, late=$("late").value==="1";
   const a=advise(zone,people,late);
   $("advice").innerHTML=`<b class="h">Sana önerimiz: ${esc(a.pick)}</b>${esc(a.why)}`;
   const z=C.zones.find(x=>x.id===zone);
   const dest=hotel?hotel+", "+C.name:(z&&z.id!=="other"?z.n.split(" /")[0]+", "+C.name:C.name);
   $("gobtns").innerHTML=`<button type="button" class="btn" id="routebtn">Rotayı haritada çiz</button>`+link(gDir(dest,"transit"),"Adım adım otobüs tarifi (Google)",1);
   $("routebtn").addEventListener("click",()=>routeTo(hotel,z));
-  store.set("hotel",hotel); store.set("zone",zone);
+  store.set("hotel",hotel);
 }
 
 /* ---------- yemek ---------- */
@@ -408,15 +441,17 @@ function updateFood(){
 }
 
 /* ---------- harita ---------- */
-let map=null, results=null, me=null, meLL=null, mapOK=false, sightPins=[], lastItems=null;
-function mapFail(){ $("mapwrap").style.display="none"; $("mapnote").style.display="block"; mapOK=false; }
+let map=null, results=null, me=null, meLL=null, mapDead=false, sightPins=[], lastItems=null, ZONE=null;
+function zoneLL(){ const z=C.zones.find(x=>x.id===ZONE); return z&&z.ll?z.ll:null; }
+function zoneName(){ const z=C.zones.find(x=>x.id===ZONE); return z&&z.id!=="other"?z.n.split(" /")[0].split(" (")[0]:C.name; }
+function mapFail(){ $("mapwrap").style.display="none"; $("mapnote").style.display="block"; mapDead=true; }
 function initMap(){
   if(typeof L==="undefined") return mapFail();
   try{
-    map=L.map("map",{scrollWheelZoom:false}).setView(C.center,C.zoom);
+    map=L.map("map",{scrollWheelZoom:false}).setView(zoneLL()||C.center,zoneLL()?13:C.zoom);
     let loaded=0;
     const tiles=L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png",{maxZoom:19,attribution:'© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>'});
-    tiles.on("tileload",()=>{loaded++; mapOK=true;});
+    tiles.on("tileload",()=>{loaded++;});
     tiles.addTo(map);
     setTimeout(()=>{ if(!loaded) mapFail(); },6000);
     const pin=(ll,color,html,r)=>L.circleMarker(ll,{radius:r||7,color:"#fff",weight:2,fillColor:color,fillOpacity:1}).addTo(map).bindPopup(html);
@@ -426,18 +461,19 @@ function initMap(){
     results=L.layerGroup().addTo(map);
   }catch(e){ mapFail(); }
 }
-function showMap(){ $("harita").scrollIntoView(); if(map) setTimeout(()=>map.invalidateSize(),80); }
+function showMap(){ const d=$("harita"); d.open=true; if(!map&&!mapDead) initMap(); d.scrollIntoView(); if(map) setTimeout(()=>map.invalidateSize(),80); }
 function dist(a,b){ const R=6371000,t=Math.PI/180,dl=(b[0]-a[0])*t,dn=(b[1]-a[1])*t; const x=Math.sin(dl/2)**2+Math.cos(a[0]*t)*Math.cos(b[0]*t)*Math.sin(dn/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
 const fmtD=m=>m<1000?Math.round(m/10)*10+" m":(m/1000).toFixed(1).replace(".",",")+" km";
 function drawList(){
   const list=$("maplist"); if(!lastItems){ list.innerHTML=""; return; }
-  if(meLL){ lastItems.forEach(it=>it.d=dist(meLL,it.ll)); lastItems.sort((a,b)=>a.d-b.d); }
-  list.innerHTML=lastItems.slice(0,8).map((it,i)=>`<div class="card"><h3>${esc(it.name)}</h3><div class="meta">${it.d!=null?`<span class="tag price">${fmtD(it.d)} uzakta</span>`:""}</div><div class="btns"><button type="button" class="btn alt" data-r="${i}">Haritada göster</button></div></div>`).join("");
+  const ref=meLL||zoneLL();
+  if(ref){ lastItems.forEach(it=>it.d=dist(ref,it.ll)); lastItems.sort((a,b)=>a.d-b.d); }
+  list.innerHTML=lastItems.slice(0,8).map((it,i)=>`<div class="card"><h3>${esc(it.name)}</h3><div class="meta">${it.d!=null?`<span class="tag price">${meLL?fmtD(it.d)+" uzakta":esc(zoneName())+" merkezine "+fmtD(it.d)}</span>`:""}</div><div class="btns"><button type="button" class="btn alt" data-r="${i}">Haritada göster</button></div></div>`).join("");
 }
-function focusSight(i){ showMap(); if(!map||!mapOK) return; map.setView(C.sights[i].ll,15); if(sightPins[i]) sightPins[i].openPopup(); }
+function focusSight(i){ showMap(); if(!map||mapDead) return; map.setView(C.sights[i].ll,15); if(sightPins[i]) sightPins[i].openPopup(); }
 async function overpass(selector,label){
   showMap();
-  if(!map||!mapOK){ return; }
+  if(!map||mapDead){ return; }
   const msg=$("mapmsg"); lastItems=null; drawList(); msg.textContent=label+" aranıyor…";
   const q="[out:json][timeout:20];"+selector+"("+C.bbox.join(",")+");out center 120;";
   try{
@@ -454,14 +490,15 @@ async function overpass(selector,label){
     });
     if(items.length){
       lastItems=items; drawList();
-      const fit=meLL?lastItems.slice(0,10).map(i=>i.ll).concat([meLL]):items.map(i=>i.ll);
+      const ref=meLL||zoneLL();
+      const fit=ref?lastItems.slice(0,10).map(i=>i.ll).concat([ref]):items.map(i=>i.ll);
       map.fitBounds(fit,{padding:[30,30],maxZoom:15});
-      msg.textContent=items.length+" yer bulundu: "+label+". "+(meLL?"Sana en yakınlar aşağıda sıralı.":"'Konumumu göster'e basarsan sana en yakınlar sıralanır.");
+      msg.textContent=items.length+" yer bulundu: "+label+". "+(meLL?"Sana en yakınlar aşağıda sıralı.":(ref?zoneName()+" merkezine en yakınlar aşağıda. ":"")+"'Konumumu göster'e basarsan sana göre sıralanır.");
     } else msg.textContent="Açık haritada kayıtlı "+label+" bulunamadı. Google düğmesini dene; Google'ın listesi daha geniştir.";
   }catch(e){ msg.textContent="Arama şu an yapılamadı. Biraz sonra tekrar dene."; }
 }
 async function routeTo(hotel,z){
-  showMap(); if(!map||!mapOK) return;
+  showMap(); if(!map||mapDead) return;
   const msg=$("mapmsg"); lastItems=null; drawList(); results.clearLayers(); msg.textContent="Rota hesaplanıyor…";
   try{
     let dest=null, name=hotel, approx=false;
@@ -506,13 +543,35 @@ async function loadRate(){
 
 /* ---------- başlat ---------- */
 render();
+function applyDest(zid){
+  ZONE=zid; store.set("zone",zid);
+  const z=C.zones.find(x=>x.id===zid), zn=zoneName();
+  $("chooser").hidden=true; $("where").hidden=false; $("change").hidden=false; $("main").hidden=false;
+  $("crumb").textContent=C.flag+" "+C.country;
+  $("h1").textContent=z.id==="other"?C.name:C.name+" · "+zn;
+  $("lede").textContent=C.lede;
+  $("facts").innerHTML=[["Havalimanı",C.airport.code],...C.facts,["Son kontrol",C.checked]].map(f=>`<li><b>${esc(f[0])}</b>${esc(f[1])}</li>`).join("");
+  const a=advise(zid,2,false);
+  $("exitme").innerHTML=`<b class="h">${esc(zn)} için kısa cevap: ${esc(a.pick)}</b>${esc(a.why)} <span class="note">İki kişi ve gündüz inişine göre. Kendi durumun için 02 numaralı sekmeye bak.</span>`;
+  updateGo();
+  if(map){ const ll=zoneLL(); if(ll) map.setView(ll,13); }
+  window.scrollTo(0,0);
+}
+function applyTheme(){
+  const t=C.theme; if(!t) return; const s=document.documentElement.style;
+  s.setProperty("--sign",t.accent); s.setProperty("--sign-ink",t.ink); $("stripe").style.background=t.stripe;
+}
+applyTheme();
+$("d-country").innerHTML=`<option value="th">${esc(C.flag+" "+C.country)}</option><option disabled>Diğer ülkeler yakında</option>`;
+$("d-city").innerHTML=`<option value="${C.id}">${esc(C.name)}</option><option disabled>Bangkok (yakında)</option><option disabled>Chiang Mai (yakında)</option>`;
+$("d-zone").innerHTML=C.zones.map(z=>`<option value="${z.id}">${esc(z.n)}</option>`).join("");
+$("destform").addEventListener("submit",e=>{ e.preventDefault(); applyDest($("d-zone").value); });
+$("change").addEventListener("click",()=>{ $("chooser").hidden=false; $("where").hidden=true; $("main").hidden=true; $("change").hidden=true; if(ZONE) $("d-zone").value=ZONE; window.scrollTo(0,0); });
 const sh=store.get("hotel"), sz=store.get("zone"), sc=store.get("cui");
 if(sh) $("hotel").value=sh;
-if(sz&&C.zones.some(z=>z.id===sz)) $("zone").value=sz;
 if(sc!==null&&CUISINES[+sc]) cui=+sc;
-["hotel","zone","people","late"].forEach(id=>$(id).addEventListener("input",updateGo));
+["hotel","people","late"].forEach(id=>$(id).addEventListener("input",updateGo));
 $("goform").addEventListener("submit",e=>e.preventDefault());
-updateGo();
 $("flags").addEventListener("click",e=>{const b=e.target.closest(".flag"); if(!b) return; cui=+b.dataset.i; updateFood();});
 $("diets").addEventListener("click",e=>{const b=e.target.closest(".chip"); if(!b) return; const i=+b.dataset.i; diet=(diet===i?-1:i); updateFood();});
 updateFood();
@@ -520,7 +579,13 @@ document.querySelectorAll(".onmap").forEach(b=>b.addEventListener("click",()=>{c
 $("locate").addEventListener("click",locate);
 $("main").addEventListener("click",e=>{const b=e.target.closest("[data-act]"); if(!b) return; if(b.dataset.act==="sight") focusSight(+b.dataset.i); else if(b.dataset.act==="fx") overpass('nwr["amenity"="bureau_de_change"]',"döviz büroları");});
 $("maplist").addEventListener("click",e=>{const b=e.target.closest("[data-r]"); if(!b||!lastItems) return; const it=lastItems[+b.dataset.r]; if(!it) return; $("map").scrollIntoView({block:"center"}); map.setView(it.ll,16); it.m.openPopup();});
-initMap();
+document.querySelectorAll("details.acc").forEach(d=>d.addEventListener("toggle",()=>{
+  if(!d.open) return;
+  if(d.id==="harita"){ if(!map&&!mapDead) initMap(); else if(map) setTimeout(()=>map.invalidateSize(),60); return; }
+  document.querySelectorAll("details.acc[open]").forEach(o=>{ if(o!==d&&o.id!=="harita") o.open=false; });
+  d.scrollIntoView({block:"start"});
+}));
+if(sz&&C.zones.some(z=>z.id===sz)) applyDest(sz);
 loadRate();
 </script>
 </body>
